@@ -2,10 +2,10 @@
   "header": {
     "id": "header",
     "brand": {
-      "title": "ShipAny Two",
+      "title": "HighClaw",
       "logo": {
-        "src": "/logo.png",
-        "alt": "ShipAny Two",
+        "src": "/highclaw.png",
+        "alt": "HighClaw",
         "width": 100,
         "height": 100
       },
@@ -113,11 +113,11 @@
   "footer": {
     "id": "footer",
     "brand": {
-      "title": "ShipAny Two",
-      "description": "ShipAny is a NextJS boilerplate for building AI SaaS startups. Ship Fast with a variety of templates and components.",
+      "title": "HighClaw",
+      "description": "HighClaw is a NextJS boilerplate for building AI SaaS startups. Ship Fast with a variety of templates and components.",
       "logo": {
-        "src": "/logo.png",
-        "alt": "ShipAny Two",
+        "src": "/highclaw.png",
+        "alt": "HighClaw",
         "width": 1024,
         "height": 1024
       },
@@ -198,7 +198,7 @@
         {
           "title": "Github",
           "icon": "Github",
-          "url": "https://github.com/your-app-name",
+          "url": "https://github.com/903174293/highclaw",
           "target": "_blank"
         },
         {

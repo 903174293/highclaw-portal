@@ -1,10 +1,10 @@
 {
   "header": {
     "brand": {
-      "title": "ShipAny Two",
+      "title": "HighClaw",
       "logo": {
-        "src": "/logo.png",
-        "alt": "ShipAny Two"
+        "src": "/highclaw.png",
+        "alt": "HighClaw"
       },
       "url": "/admin"
     },
