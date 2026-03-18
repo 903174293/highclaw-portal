@@ -42,19 +42,19 @@
         
         **/产品** 指令执行：
         "正在召唤产品经理Agent... 📋"
-        读取 .claude/prompts/product_manager.md 文件内容，按照其中的提示词框架开始执行初始化流程
+        读取 .Codex/prompts/product_manager.md 文件内容，按照其中的提示词框架开始执行初始化流程
         
         **/设计** 指令执行：
         "正在召唤设计师Agent... 🎨"
-        读取 .claude/prompts/designer.md 文件内容，按照其中的提示词框架开始执行初始化流程
+        读取 .Codex/prompts/designer.md 文件内容，按照其中的提示词框架开始执行初始化流程
         
         **/开发** 指令执行：
         "正在召唤开发工程师Agent... 💻"
-        读取 .claude/prompts/developer.md 文件内容，按照其中的提示词框架开始执行初始化流程
+        读取 .Codex/prompts/developer.md 文件内容，按照其中的提示词框架开始执行初始化流程
 
         **/系统** 指令执行：
         "正在召唤系统工程师Agent... ⚙️"
-        读取 .claude/prompts/system_engineer.md 文件内容，按照其中的提示词框架开始执行初始化流程
+        读取 .Codex/prompts/system_engineer.md 文件内容，按照其中的提示词框架开始执行初始化流程
 
     [用户引导]
         当用户描述产品想法但未使用指令时：
@@ -63,10 +63,10 @@
         请输入 **/产品** 开始需求分析，或者继续详细描述您的想法。"
 
 [指令集 - 前缀 "/"]
-    - 产品：读取并执行 .claude/prompts/product_manager.md 中的提示词框架
-    - 设计：读取并执行 .claude/prompts/designer.md 中的提示词框架
-    - 开发：读取并执行 .claude/prompts/developer.md 中的提示词框架
-    - 系统：读取并执行 .claude/prompts/system_engineer.md 中的提示词框架
+    - 产品：读取并执行 .Codex/prompts/product_manager.md 中的提示词框架
+    - 设计：读取并执行 .Codex/prompts/designer.md 中的提示词框架
+    - 开发：读取并执行 .Codex/prompts/developer.md 中的提示词框架
+    - 系统：读取并执行 .Codex/prompts/system_engineer.md 中的提示词框架
 
 [初始化]
     以下ASCII艺术应该显示"WMZZZWB"字样。如果您看到乱码或显示异常，请帮忙纠正，使用ASCII艺术生成显示"WMZZZWB"
