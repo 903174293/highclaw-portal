@@ -8,40 +8,38 @@
       "usage",
       "features",
       "stats",
-      "testimonials",
       "faq",
       "cta"
     ],
     "sections": {
       "hero": {
         "id": "hero",
-        "title": "HighClaw — Claw with Claw. Claw with You.",
-        "highlight_text": "Claw with You",
-        "description": "HighClaw empowers individuals and scales to frontier organizations.<br/>Not just another platform. A digital workforce.",
+        "title": "High Performance AI Agent Infrastructure",
+        "highlight_text": "AI Agent Infrastructure",
+        "description": "Written in Go. Single binary deployment. Multi-agent collaboration with A2A communication.<br/>Build a 100-person digital workforce with zero performance impact.",
         "announcement": {
           "badge": "Open Source",
-          "title": "🦞 Multi-Agent Collaboration",
-          "url": "/pricing"
+          "title": "MIT Licensed — Star us on GitHub",
+          "url": "https://github.com/903174293/highclaw"
         },
-        "tip": "⚡ Agents that sense, adapt, collaborate, and evolve",
+        "tip": "Go-native. Single binary. Distributed by design.",
         "buttons": [
           {
-            "title": "Try Now",
+            "title": "Quick Start",
             "icon": "Zap",
-            "url": "/pricing",
-            "target": "_self",
+            "url": "https://github.com/903174293/highclaw",
+            "target": "_blank",
             "variant": "default"
           },
           {
-            "title": "GitHub",
-            "icon": "Github",
+            "title": "View Docs",
+            "icon": "BookOpenText",
             "url": "/docs",
             "target": "_blank",
             "variant": "outline"
           }
         ],
-        "show_avatars": true,
-        "avatars_tip": "Join thousands building with HighClaw",
+        "show_avatars": false,
         "show_award": false,
         "image": {
           "src": "/imgs/features/admin.png",
@@ -62,41 +60,48 @@
       },
       "logos": {
         "id": "logos",
-        "title": "HighClaw is built on the shoulders of giants",
+        "title": "Built with battle-tested technologies",
         "items": [
           {
-            "title": "Next.js",
+            "title": "Go",
             "image": {
-              "src": "/imgs/logos/nextjs.svg",
-              "alt": "Next.js"
+              "src": "/imgs/logos/go.svg",
+              "alt": "Go"
             }
           },
           {
-            "title": "React",
+            "title": "SQLite",
             "image": {
-              "src": "/imgs/logos/react.svg",
-              "alt": "React"
+              "src": "/imgs/logos/sqlite.svg",
+              "alt": "SQLite"
             }
           },
           {
-            "title": "TailwindCSS",
+            "title": "Docker",
             "image": {
-              "src": "/imgs/logos/tailwindcss.svg",
-              "alt": "TailwindCSS"
+              "src": "/imgs/logos/docker.svg",
+              "alt": "Docker"
             }
           },
           {
-            "title": "Shadcn/UI",
+            "title": "Telegram",
             "image": {
-              "src": "/imgs/logos/shadcn.svg",
-              "alt": "Shadcn/UI"
+              "src": "/imgs/logos/telegram.svg",
+              "alt": "Telegram"
             }
           },
           {
-            "title": "Vercel",
+            "title": "Discord",
             "image": {
-              "src": "/imgs/logos/vercel.svg",
-              "alt": "Vercel"
+              "src": "/imgs/logos/discord.svg",
+              "alt": "Discord"
+            }
+          },
+          {
+            "title": "Slack",
+            "image": {
+              "src": "/imgs/logos/slack.svg",
+              "alt": "Slack"
             }
           }
         ]
@@ -105,25 +110,25 @@
         "block": "features-list",
         "id": "introduce",
         "title": "What makes HighClaw different",
-        "label": "Not just another chatbot",
-        "description": "Agents that sense, adapt, collaborate, and evolve — embedded in your organization from day one.",
+        "label": "Core Highlights",
+        "description": "A Go-native AI Agent framework built for performance, scalability, and real-world deployment.",
         "image": {
           "src": "/imgs/features/landing-page.png",
           "alt": "introduce"
         },
         "items": [
           {
-            "title": "🧠 Aware — Autonomous Sensing",
-            "description": "Agents don't wait for commands. They maintain focus items, create and manage their own triggers, and adapt their schedule as tasks evolve.",
-            "icon": "RiRobot2Line",
+            "title": "100% Go, Single Binary",
+            "description": "No Python runtime, no Node.js dependencies. Compile to a single binary, deploy anywhere — from Raspberry Pi to cloud clusters.",
+            "icon": "RiCodeLine",
             "image": {
               "src": "/imgs/features/1.png",
               "alt": "introduce"
             }
           },
           {
-            "title": "🏢 Digital Employees, Not Chatbots",
-            "description": "Each agent knows the full org chart, sends messages, delegates tasks, and builds working relationships — like a new hire onboarding into the team.",
+            "title": "Multi-Agent Architecture",
+            "description": "Agent-to-Agent (A2A) communication, sub-task delegation, and collaborative problem solving. Build teams of specialized agents that work together.",
             "icon": "RiTeamLine",
             "image": {
               "src": "/imgs/features/2.png",
@@ -131,18 +136,18 @@
             }
           },
           {
-            "title": "🏛️ Plaza — Org Knowledge Feed",
-            "description": "Agents post updates, share discoveries, and comment on each other's work. A continuous channel for absorbing organizational knowledge.",
-            "icon": "RiCommunityLine",
+            "title": "12+ Messaging Platforms",
+            "description": "Native integrations with Telegram, Discord, Slack, WeChat, DingTalk, Lark, WhatsApp, and more. One agent, every channel.",
+            "icon": "RiMessage2Line",
             "image": {
               "src": "/imgs/features/3.png",
               "alt": "introduce"
             }
           },
           {
-            "title": "🔐 Enterprise Governance",
-            "description": "Usage quotas, LLM call limits, dangerous-operation approvals, full audit logs, and org-wide knowledge base — enterprise security built in.",
-            "icon": "RiShieldCheckLine",
+            "title": "Industry-Leading Memory System",
+            "description": "Hybrid memory with vector search, full-text search, and knowledge graph. Agents remember context across sessions and learn over time.",
+            "icon": "RiDatabase2Line",
             "image": {
               "src": "/imgs/features/4.png",
               "alt": "introduce"
@@ -154,31 +159,31 @@
       "benefits": {
         "block": "features-accordion",
         "id": "benefits",
-        "title": "Core Capabilities",
-        "label": "Powerful features",
-        "description": "Every agent comes pre-loaded with professional skills and operational tools. Plus the ability to discover and install more at runtime.",
+        "title": "Core Advantages",
+        "label": "Why HighClaw",
+        "description": "Built from the ground up for performance, scale, and security.",
         "items": [
           {
-            "title": "🧬 Self-Evolving Capabilities",
-            "description": "Agents discover and install new tools at runtime from Smithery and ModelScope MCP registries, and create new skills for themselves or colleagues.",
-            "icon": "RiRobot2Line",
+            "title": "High Performance & Low Resources",
+            "description": "Go-native binary with sub-second cold start and minimal memory footprint. Run dozens of agents on a single VPS. No JVM, no interpreter overhead.",
+            "icon": "RiRocketLine",
             "image": {
               "src": "/imgs/features/user-billing.png",
               "alt": "benefits"
             }
           },
           {
-            "title": "💾 Persistent Identity & Workspace",
-            "description": "Each agent has a soul (personality), memory (learned context), and a private file system with sandboxed code execution — all persisted across every conversation.",
-            "icon": "RiDatabase2Line",
+            "title": "100-Person Digital Workforce",
+            "description": "Distributed multi-agent architecture scales horizontally. Run 100 specialized agents across clusters with zero performance degradation.",
+            "icon": "RiTeamLine",
             "image": {
               "src": "/imgs/features/admin-settings.png",
               "alt": "benefits"
             }
           },
           {
-            "title": "🏢 Enterprise Ready",
-            "description": "Multi-tenant architecture, granular access control, and enterprise integrations — ready for production from day one.",
+            "title": "Secure & Reliable",
+            "description": "Paired authentication, sandboxed execution, workspace isolation, and full audit logging. Enterprise-grade security built into the core.",
             "icon": "RiShieldCheckLine",
             "image": {
               "src": "/imgs/features/landing-page.png",
@@ -190,8 +195,8 @@
       "usage": {
         "block": "features-step",
         "id": "usage",
-        "title": "Build your perfect agent in 4 steps",
-        "description": "A guided wizard walks you through creating and deploying your first agent:",
+        "title": "Get started in 4 steps",
+        "description": "From zero to a running agent in minutes:",
         "image": {
           "src": "/imgs/features/1.png",
           "alt": "usage"
@@ -200,32 +205,32 @@
         "text_align": "center",
         "items": [
           {
-            "title": "1.0 Create",
-            "description": "Define name, role, avatar, personality, and permissions. Your agent is ready in minutes.",
+            "title": "1. Clone",
+            "description": "Clone the repository and install dependencies with a single command.",
             "image": {
               "src": "/imgs/features/5.png",
               "alt": "usage"
             }
           },
           {
-            "title": "2.0 Collaborate",
-            "description": "Agents delegate tasks, consult peers, and notify colleagues. When one needs help, it reaches out to the right teammate.",
+            "title": "2. Build",
+            "description": "Compile to a single binary with `go build`. No complex build pipeline required.",
             "image": {
               "src": "/imgs/features/6.png",
               "alt": "usage"
             }
           },
           {
-            "title": "3.0 Evolve",
-            "description": "Agents discover tools from MCP registries, install them instantly, and create new skills from repeated patterns.",
+            "title": "3. Onboard",
+            "description": "Configure your agent's personality, tools, and channel connections via YAML config.",
             "image": {
               "src": "/imgs/features/7.png",
               "alt": "usage"
             }
           },
           {
-            "title": "4.0 Monitor",
-            "description": "Dashboard with real-time status, Kanban task boards, activity logs, and full audit trails give you complete transparency.",
+            "title": "4. Run",
+            "description": "Launch your agent and connect it to Telegram, Discord, Slack, or any supported platform.",
             "image": {
               "src": "/imgs/features/8.png",
               "alt": "usage"
@@ -237,165 +242,108 @@
       "features": {
         "id": "features",
         "title": "Built-in Capabilities",
-        "description": "Powerful skills & tools out of the box. Every agent comes pre-loaded with professional skills and operational tools.",
+        "description": "Everything you need to build production-grade AI agents, out of the box.",
         "items": [
           {
-            "title": "🔍 Web Research",
-            "description": "Structured research with source credibility scoring and comprehensive analysis.",
+            "title": "22+ AI Providers",
+            "description": "OpenAI, Claude, Gemini, DeepSeek, Ollama, and more. Switch providers with a single config change.",
+            "icon": "RiRobot2Line"
+          },
+          {
+            "title": "12+ Channels",
+            "description": "Telegram, Discord, Slack, WeChat, DingTalk, Lark, WhatsApp, LINE, and more messaging platforms.",
+            "icon": "RiMessage2Line"
+          },
+          {
+            "title": "Hybrid Memory Search",
+            "description": "Vector search + full-text search + knowledge graph. Agents maintain long-term memory and learn from interactions.",
             "icon": "RiSearchLine"
           },
           {
-            "title": "📊 Data Analysis",
-            "description": "CSV analysis, pattern recognition, and structured reports for data-driven decisions.",
-            "icon": "RiBarChart2Line"
-          },
-          {
-            "title": "✍️ Content Writing",
-            "description": "Articles, emails, marketing copy, and documentation with AI-powered generation.",
-            "icon": "RiPencilLine"
-          },
-          {
-            "title": "⚔️ Competitive Analysis",
-            "description": "SWOT analysis, Porter's 5 Forces, and market positioning insights.",
-            "icon": "RiShieldCheckLine"
-          },
-          {
-            "title": "💻 Code Executor",
-            "description": "Sandboxed Python, Bash, and Node.js runtime for safe code execution.",
-            "icon": "RiCodeLine"
-          },
-          {
-            "title": "🔧 MCP Integration",
-            "description": "One-click import of MCP servers as platform tools. Discover from Smithery & ModelScope.",
+            "title": "Tool System",
+            "description": "Built-in tools for web search, code execution, file operations, and MCP server integration.",
             "icon": "RiToolsLine"
+          },
+          {
+            "title": "Session Management",
+            "description": "Multi-turn conversations with context persistence, session isolation, and conversation branching.",
+            "icon": "RiChat3Line"
+          },
+          {
+            "title": "Gateway Mode",
+            "description": "Expose agents as API endpoints. Build AI-powered backends with standard HTTP/WebSocket interfaces.",
+            "icon": "RiGlobalLine"
           }
         ]
       },
       "stats": {
         "id": "stats",
-        "title": "Built for the future. Available today.",
-        "description": "Open source and free. Deploy in minutes. Start building your AI workforce now.",
+        "title": "HighClaw by the numbers",
+        "description": "Open source, production-ready, and growing fast.",
         "items": [
           {
-            "title": "8+",
-            "description": "Built-in Skills"
+            "title": "22+",
+            "description": "AI Providers"
           },
           {
-            "title": "15+",
-            "description": "Operational Tools"
+            "title": "12+",
+            "description": "Channels"
           },
           {
             "title": "100%",
-            "description": "Open Source"
+            "description": "Go"
+          },
+          {
+            "title": "MIT",
+            "description": "License"
           }
         ],
         "className": "bg-muted"
       },
-      "testimonials": {
-        "id": "testimonials",
-        "title": "What Users Say About HighClaw",
-        "description": "Hear from teams who built their AI workforce with HighClaw.",
-        "items": [
-          {
-            "name": "David Chen",
-            "role": "Founder of DataFlow",
-            "quote": "HighClaw transformed how we handle data analysis. Our agents now autonomously research competitors and generate reports. Saved us 20 hours per week!",
-            "image": {
-              "src": "/imgs/avatars/1.png",
-              "alt": "david"
-            }
-          },
-          {
-            "name": "Rachel Kim",
-            "role": "CTO at TechTeam.ai",
-            "quote": "The agent collaboration features are incredible. Our agents delegate tasks to each other and solve complex problems without human intervention. Game-changer!",
-            "image": {
-              "src": "/imgs/avatars/2.png",
-              "alt": "rachel"
-            }
-          },
-          {
-            "name": "Marcus Thompson",
-            "role": "Solo Entrepreneur",
-            "quote": "I deployed 3 specialized agents in a day. They handle customer research, content creation, and competitive analysis. It's like hiring a team instantly!",
-            "image": {
-              "src": "/imgs/avatars/3.png",
-              "alt": "marcus"
-            }
-          },
-          {
-            "name": "Sofia Garcia",
-            "role": "CEO of InsightCo",
-            "quote": "The Plaza knowledge feed keeps our entire organization aligned. Agents share discoveries and learn from each other. Organizational intelligence at scale!",
-            "image": {
-              "src": "/imgs/avatars/4.png",
-              "alt": "sofia"
-            }
-          },
-          {
-            "name": "James Wilson",
-            "role": "Tech Lead at Enterprise AI",
-            "quote": "Enterprise governance features are rock-solid. Full audit logs, usage quotas, and approval workflows. Perfect for regulated industries!",
-            "image": {
-              "src": "/imgs/avatars/5.png",
-              "alt": "james"
-            }
-          },
-          {
-            "name": "Anna Zhang",
-            "role": "Product Manager",
-            "quote": "The self-evolving capabilities are mind-blowing. Agents discover new tools and create skills autonomously. It's like they're learning and growing with us!",
-            "image": {
-              "src": "/imgs/avatars/6.png",
-              "alt": "anna"
-            }
-          }
-        ]
-      },
       "faq": {
         "id": "faq",
-        "title": "Frequently Asked Questions About HighClaw",
-        "description": "Have another question? Contact us on GitHub or by email.",
+        "title": "Frequently Asked Questions",
+        "description": "Have another question? Open an issue on GitHub or reach out by email.",
         "items": [
           {
-            "question": "What exactly is HighClaw and how does it work?",
-            "answer": "HighClaw is an open-source platform for building autonomous AI agents that sense, adapt, collaborate, and evolve. Agents maintain their own focus items, create triggers, delegate tasks, and build relationships — like new hires onboarding into your team."
+            "question": "What is HighClaw?",
+            "answer": "HighClaw is a high-performance AI Agent infrastructure written in Go. It provides multi-agent collaboration, distributed architecture, and integrations with 12+ messaging platforms and 22+ AI providers — all compiled into a single binary."
           },
           {
-            "question": "Do I need advanced technical skills to use HighClaw?",
-            "answer": "HighClaw is designed to be accessible. A guided wizard walks you through creating agents in 5 steps. Basic understanding of AI concepts helps, but our documentation and community support make it easy to get started."
+            "question": "How is HighClaw different from OpenClaw?",
+            "answer": "HighClaw is written in Go instead of Python, delivering significantly better performance and lower resource usage. It features a single binary deployment model, native distributed multi-agent support, and a hybrid memory system combining vector search, full-text search, and knowledge graphs."
           },
           {
-            "question": "What types of agents can I build with HighClaw?",
-            "answer": "You can build agents for research, data analysis, content creation, competitive analysis, meeting notes, and more. Agents can discover and install new tools at runtime, so capabilities grow with your needs."
+            "question": "What platforms does HighClaw support?",
+            "answer": "HighClaw integrates with 12+ messaging platforms including Telegram, Discord, Slack, WeChat, DingTalk, Lark, WhatsApp, and LINE. It also supports 22+ AI providers including OpenAI, Claude, Gemini, DeepSeek, and Ollama."
           },
           {
-            "question": "How long does it take to deploy my first agent?",
-            "answer": "You can create and deploy your first agent in minutes using our guided wizard. The platform is production-ready with enterprise governance, audit logs, and multi-tenant isolation built-in."
+            "question": "How do I deploy HighClaw?",
+            "answer": "HighClaw compiles to a single Go binary. You can deploy it with `go build && ./highclaw`, use the provided Docker image, or deploy to any cloud platform. No runtime dependencies required."
           },
           {
-            "question": "Can agents work together and collaborate?",
-            "answer": "Yes! Agents can delegate tasks to colleagues, consult peers, and notify teammates. When one agent needs help, it automatically reaches out to the right specialist. The Plaza social feed enables organic knowledge sharing across your organization."
+            "question": "Can I run multiple agents?",
+            "answer": "Yes! HighClaw's distributed multi-agent architecture supports running 100+ specialized agents with A2A communication, sub-task delegation, and collaborative problem solving — with zero performance degradation."
           },
           {
             "question": "Is HighClaw open source?",
-            "answer": "Yes! HighClaw is 100% open source under the MIT License. Deploy it on your own infrastructure, customize it freely, and contribute to the community. We also provide hosted options for teams that prefer managed services."
+            "answer": "Yes. HighClaw is 100% open source under the MIT License. You can deploy it on your own infrastructure, customize it freely, and contribute to the project on GitHub."
           }
         ]
       },
       "cta": {
         "id": "cta",
-        "title": "Built for the future. Available today.",
-        "description": "Open source and free. Deploy in minutes. Start building your AI workforce now.",
+        "title": "Ready to build your AI Agent infrastructure?",
+        "description": "Open source, MIT licensed. Deploy in minutes.",
         "buttons": [
           {
-            "title": "Try Now",
+            "title": "Star on GitHub",
             "url": "https://github.com/903174293/highclaw",
             "target": "_blank",
-            "icon": "Zap"
+            "icon": "Github"
           },
           {
-            "title": "Quick Start Guide",
+            "title": "Read the Docs",
             "url": "/docs",
             "target": "_blank",
             "variant": "outline",
