@@ -2,370 +2,62 @@
   "page": {
     "show_sections": [
       "hero",
-      "logos",
-      "introduce",
-      "benefits",
-      "usage",
-      "features",
-      "stats",
-      "faq",
-      "cta"
+      "advantages",
+      "multiagent",
+      "memory",
+      "agentteam",
+      "failover",
+      "comparison",
+      "getstarted"
     ],
     "sections": {
       "hero": {
         "id": "hero",
-        "title": "High Performance AI Agent Infrastructure",
-        "highlight_text": "AI Agent Infrastructure",
-        "description": "Written in Go. Single binary deployment. Multi-agent collaboration with A2A communication.<br/>Build a 100-person digital workforce with zero performance impact.",
-        "announcement": {
-          "badge": "Open Source",
-          "title": "MIT Licensed — Star us on GitHub",
-          "url": "https://github.com/903174293/highclaw"
-        },
-        "tip": "Go-native. Single binary. Distributed by design.",
-        "buttons": [
-          {
-            "title": "Quick Start",
-            "icon": "Zap",
-            "url": "https://github.com/903174293/highclaw",
-            "target": "_blank",
-            "variant": "default"
-          },
-          {
-            "title": "View Docs",
-            "icon": "BookOpenText",
-            "url": "/docs",
-            "target": "_blank",
-            "variant": "outline"
-          }
-        ],
-        "show_avatars": false,
-        "show_award": false,
-        "image": {
-          "src": "/imgs/features/admin.png",
-          "alt": "hero",
-          "width": 1200,
-          "height": 800
-        },
-        "image_invert": {
-          "src": "/imgs/features/admin-dark.png",
-          "alt": "hero",
-          "width": 1200,
-          "height": 800
-        },
-        "background_image": {
-          "src": "/imgs/bg/tree.jpg",
-          "alt": "hero"
-        }
+        "block": "highclaw-hero",
+        "title": "High-Performance AI Agent Infrastructure",
+        "description": "High performance. Built for speed and reliability. 100% Go. 100% Agnostic."
       },
-      "logos": {
-        "id": "logos",
-        "title": "Built with battle-tested technologies",
-        "items": [
-          {
-            "title": "Go",
-            "image": {
-              "src": "/imgs/logos/go.svg",
-              "alt": "Go"
-            }
-          },
-          {
-            "title": "SQLite",
-            "image": {
-              "src": "/imgs/logos/sqlite.svg",
-              "alt": "SQLite"
-            }
-          },
-          {
-            "title": "Docker",
-            "image": {
-              "src": "/imgs/logos/docker.svg",
-              "alt": "Docker"
-            }
-          },
-          {
-            "title": "Telegram",
-            "image": {
-              "src": "/imgs/logos/telegram.svg",
-              "alt": "Telegram"
-            }
-          },
-          {
-            "title": "Discord",
-            "image": {
-              "src": "/imgs/logos/discord.svg",
-              "alt": "Discord"
-            }
-          },
-          {
-            "title": "Slack",
-            "image": {
-              "src": "/imgs/logos/slack.svg",
-              "alt": "Slack"
-            }
-          }
-        ]
-      },
-      "introduce": {
-        "block": "features-list",
-        "id": "introduce",
-        "title": "What makes HighClaw different",
-        "label": "Core Highlights",
-        "description": "A Go-native AI Agent framework built for performance, scalability, and real-world deployment.",
-        "image": {
-          "src": "/imgs/features/landing-page.png",
-          "alt": "introduce"
-        },
-        "items": [
-          {
-            "title": "100% Go, Single Binary",
-            "description": "No Python runtime, no Node.js dependencies. Compile to a single binary, deploy anywhere — from Raspberry Pi to cloud clusters.",
-            "icon": "RiCodeLine",
-            "image": {
-              "src": "/imgs/features/1.png",
-              "alt": "introduce"
-            }
-          },
-          {
-            "title": "Multi-Agent Architecture",
-            "description": "Agent-to-Agent (A2A) communication, sub-task delegation, and collaborative problem solving. Build teams of specialized agents that work together.",
-            "icon": "RiTeamLine",
-            "image": {
-              "src": "/imgs/features/2.png",
-              "alt": "introduce"
-            }
-          },
-          {
-            "title": "12+ Messaging Platforms",
-            "description": "Native integrations with Telegram, Discord, Slack, WeChat, DingTalk, Lark, WhatsApp, and more. One agent, every channel.",
-            "icon": "RiMessage2Line",
-            "image": {
-              "src": "/imgs/features/3.png",
-              "alt": "introduce"
-            }
-          },
-          {
-            "title": "Industry-Leading Memory System",
-            "description": "Hybrid memory with vector search, full-text search, and knowledge graph. Agents remember context across sessions and learn over time.",
-            "icon": "RiDatabase2Line",
-            "image": {
-              "src": "/imgs/features/4.png",
-              "alt": "introduce"
-            }
-          }
-        ],
-        "className": "bg-muted"
-      },
-      "benefits": {
-        "block": "features-accordion",
-        "id": "benefits",
-        "title": "Core Advantages",
-        "label": "Why HighClaw",
-        "description": "Built from the ground up for performance, scale, and security.",
-        "items": [
-          {
-            "title": "High Performance & Low Resources",
-            "description": "Go-native binary with sub-second cold start and minimal memory footprint. Run dozens of agents on a single VPS. No JVM, no interpreter overhead.",
-            "icon": "RiRocketLine",
-            "image": {
-              "src": "/imgs/features/user-billing.png",
-              "alt": "benefits"
-            }
-          },
-          {
-            "title": "100-Person Digital Workforce",
-            "description": "Distributed multi-agent architecture scales horizontally. Run 100 specialized agents across clusters with zero performance degradation.",
-            "icon": "RiTeamLine",
-            "image": {
-              "src": "/imgs/features/admin-settings.png",
-              "alt": "benefits"
-            }
-          },
-          {
-            "title": "Secure & Reliable",
-            "description": "Paired authentication, sandboxed execution, workspace isolation, and full audit logging. Enterprise-grade security built into the core.",
-            "icon": "RiShieldCheckLine",
-            "image": {
-              "src": "/imgs/features/landing-page.png",
-              "alt": "benefits"
-            }
-          }
-        ]
-      },
-      "usage": {
-        "block": "features-step",
-        "id": "usage",
-        "title": "Get started in 4 steps",
-        "description": "From zero to a running agent in minutes:",
-        "image": {
-          "src": "/imgs/features/1.png",
-          "alt": "usage"
-        },
-        "image_position": "left",
-        "text_align": "center",
-        "items": [
-          {
-            "title": "1. Clone",
-            "description": "Clone the repository and install dependencies with a single command.",
-            "image": {
-              "src": "/imgs/features/5.png",
-              "alt": "usage"
-            }
-          },
-          {
-            "title": "2. Build",
-            "description": "Compile to a single binary with `go build`. No complex build pipeline required.",
-            "image": {
-              "src": "/imgs/features/6.png",
-              "alt": "usage"
-            }
-          },
-          {
-            "title": "3. Onboard",
-            "description": "Configure your agent's personality, tools, and channel connections via YAML config.",
-            "image": {
-              "src": "/imgs/features/7.png",
-              "alt": "usage"
-            }
-          },
-          {
-            "title": "4. Run",
-            "description": "Launch your agent and connect it to Telegram, Discord, Slack, or any supported platform.",
-            "image": {
-              "src": "/imgs/features/8.png",
-              "alt": "usage"
-            }
-          }
-        ],
-        "className": "bg-muted"
-      },
-      "features": {
+      "advantages": {
         "id": "features",
-        "title": "Built-in Capabilities",
-        "description": "Everything you need to build production-grade AI agents, out of the box.",
-        "items": [
-          {
-            "title": "22+ AI Providers",
-            "description": "OpenAI, Claude, Gemini, DeepSeek, Ollama, and more. Switch providers with a single config change.",
-            "icon": "RiRobot2Line"
-          },
-          {
-            "title": "12+ Channels",
-            "description": "Telegram, Discord, Slack, WeChat, DingTalk, Lark, WhatsApp, LINE, and more messaging platforms.",
-            "icon": "RiMessage2Line"
-          },
-          {
-            "title": "Hybrid Memory Search",
-            "description": "Vector search + full-text search + knowledge graph. Agents maintain long-term memory and learn from interactions.",
-            "icon": "RiSearchLine"
-          },
-          {
-            "title": "Tool System",
-            "description": "Built-in tools for web search, code execution, file operations, and MCP server integration.",
-            "icon": "RiToolsLine"
-          },
-          {
-            "title": "Session Management",
-            "description": "Multi-turn conversations with context persistence, session isolation, and conversation branching.",
-            "icon": "RiChat3Line"
-          },
-          {
-            "title": "Gateway Mode",
-            "description": "Expose agents as API endpoints. Build AI-powered backends with standard HTTP/WebSocket interfaces.",
-            "icon": "RiGlobalLine"
-          }
-        ]
+        "block": "highclaw-advantages",
+        "title": "Why HighClaw",
+        "description": "Built from the ground up for performance, scale, and developer experience."
       },
-      "stats": {
-        "id": "stats",
-        "title": "HighClaw by the numbers",
-        "description": "Open source, production-ready, and growing fast.",
-        "items": [
-          {
-            "title": "22+",
-            "description": "AI Providers"
-          },
-          {
-            "title": "12+",
-            "description": "Channels"
-          },
-          {
-            "title": "100%",
-            "description": "Go"
-          },
-          {
-            "title": "MIT",
-            "description": "License"
-          }
-        ],
-        "className": "bg-muted"
+      "multiagent": {
+        "id": "multiagent",
+        "block": "highclaw-multiagent",
+        "title": "Built for Multi-Agent Collaboration at Scale",
+        "description": "Orchestrate 100+ specialized AI agents in a single instance."
       },
-      "faq": {
-        "id": "faq",
-        "title": "Frequently Asked Questions",
-        "description": "Have another question? Open an issue on GitHub or reach out by email.",
-        "items": [
-          {
-            "question": "What is HighClaw?",
-            "answer": "HighClaw is a high-performance AI Agent infrastructure written in Go. It provides multi-agent collaboration, distributed architecture, and integrations with 12+ messaging platforms and 22+ AI providers — all compiled into a single binary."
-          },
-          {
-            "question": "How is HighClaw different from OpenClaw?",
-            "answer": "HighClaw is written in Go instead of Python, delivering significantly better performance and lower resource usage. It features a single binary deployment model, native distributed multi-agent support, and a hybrid memory system combining vector search, full-text search, and knowledge graphs."
-          },
-          {
-            "question": "What platforms does HighClaw support?",
-            "answer": "HighClaw integrates with 12+ messaging platforms including Telegram, Discord, Slack, WeChat, DingTalk, Lark, WhatsApp, and LINE. It also supports 22+ AI providers including OpenAI, Claude, Gemini, DeepSeek, and Ollama."
-          },
-          {
-            "question": "How do I deploy HighClaw?",
-            "answer": "HighClaw compiles to a single Go binary. You can deploy it with `go build && ./highclaw`, use the provided Docker image, or deploy to any cloud platform. No runtime dependencies required."
-          },
-          {
-            "question": "Can I run multiple agents?",
-            "answer": "Yes! HighClaw's distributed multi-agent architecture supports running 100+ specialized agents with A2A communication, sub-task delegation, and collaborative problem solving — with zero performance degradation."
-          },
-          {
-            "question": "Is HighClaw open source?",
-            "answer": "Yes. HighClaw is 100% open source under the MIT License. You can deploy it on your own infrastructure, customize it freely, and contribute to the project on GitHub."
-          }
-        ]
+      "memory": {
+        "id": "memory",
+        "block": "highclaw-memory",
+        "title": "Industry-Leading Memory System",
+        "description": "Full-stack search engine inside a single SQLite file."
       },
-      "cta": {
-        "id": "cta",
-        "title": "Ready to build your AI Agent infrastructure?",
-        "description": "Open source, MIT licensed. Deploy in minutes.",
-        "buttons": [
-          {
-            "title": "Star on GitHub",
-            "url": "https://github.com/903174293/highclaw",
-            "target": "_blank",
-            "icon": "Github"
-          },
-          {
-            "title": "Read the Docs",
-            "url": "/docs",
-            "target": "_blank",
-            "variant": "outline",
-            "icon": "BookOpenText"
-          }
-        ],
-        "className": "bg-muted"
+      "agentteam": {
+        "id": "agentteam",
+        "block": "highclaw-agentteam",
+        "title": "Build Your AI Workforce",
+        "description": "From digital personas to coordinated agent teams — all in one config file."
       },
-      "subscribe": {
-        "id": "subscribe",
-        "title": "Subscribe to our newsletter",
-        "description": "Get the latest news and updates from HighClaw.",
-        "submit": {
-          "input": {
-            "placeholder": "Enter your email"
-          },
-          "button": {
-            "title": "Subscribe"
-          },
-          "action": "/api/subscribe"
-        },
-        "className": "bg-muted"
+      "failover": {
+        "id": "failover",
+        "block": "highclaw-failover",
+        "title": "Always-On AI — Model Failover Built In",
+        "description": "When your primary model goes down, HighClaw automatically switches."
+      },
+      "comparison": {
+        "id": "comparison",
+        "block": "highclaw-comparison",
+        "title": "How HighClaw Compares",
+        "description": "Built to outperform."
+      },
+      "getstarted": {
+        "id": "getstarted",
+        "block": "highclaw-getstarted",
+        "title": "Get Started in 3 Steps",
+        "description": "Clone, build, and chat."
       }
     }
   }

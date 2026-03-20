@@ -14,20 +14,35 @@
     "nav": {
       "items": [
         {
-          "title": "Features",
-          "url": "/#features",
-          "icon": "Sparkles"
+          "title": "Download",
+          "url": "/download",
+          "icon": "Download"
         },
         {
-          "title": "Docs",
+          "title": "Tutorials",
           "url": "/docs",
           "icon": "BookOpenText"
+        },
+        {
+          "title": "Blog",
+          "url": "/blog",
+          "icon": "Newspaper"
         },
         {
           "title": "GitHub",
           "url": "https://github.com/903174293/highclaw",
           "target": "_blank",
           "icon": "Github"
+        },
+        {
+          "title": "Team",
+          "url": "/team",
+          "icon": "Users"
+        },
+        {
+          "title": "Contact Us",
+          "url": "/contact",
+          "icon": "Mail"
         }
       ]
     },
@@ -57,7 +72,7 @@
     "id": "footer",
     "brand": {
       "title": "HighClaw",
-      "description": "High performance AI Agent infrastructure written in Go. Single binary, multi-agent collaboration, distributed architecture.",
+      "description": "High performance. Built for speed and reliability. 100% Go. 100% Agnostic.",
       "logo": {
         "src": "/highclaw.png",
         "alt": "HighClaw",
@@ -108,7 +123,7 @@
     "social": {
       "items": [
         {
-          "title": "Github",
+          "title": "GitHub",
           "icon": "Github",
           "url": "https://github.com/903174293/highclaw",
           "target": "_blank"
@@ -116,13 +131,13 @@
         {
           "title": "Discord",
           "icon": "RiDiscordFill",
-          "url": "https://discord.gg/your-app-name",
+          "url": "https://discord.gg/89C8zWz4H",
           "target": "_blank"
         },
         {
           "title": "Email",
           "icon": "Mail",
-          "url": "mailto:support@your-domain.com",
+          "url": "mailto:contact@highclaw.ai",
           "target": "_self"
         }
       ]
@@ -139,6 +154,8 @@
         }
       ]
     },
+    "copyright": "© 2025 HighClaw. All rights reserved.",
+    "show_built_with": false,
     "show_theme": true,
     "show_locale": true
   }

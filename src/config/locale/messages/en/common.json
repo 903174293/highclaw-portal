@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "title": "ShipAny Template Two",
-    "description": "ShipAny is a NextJS boilerplate for building AI SaaS startups. Ship Fast with a variety of templates and components.",
-    "keywords": "shipany, shipany-boilerplate, shipany-template-two-demo"
+    "title": "HighClaw — High-Performance AI Agent Infrastructure | 100% Go",
+    "description": "HighClaw is a lightweight, high-performance AI agent infrastructure built in pure Go. Orchestrate 100+ agents, 22+ AI providers, 12+ messaging channels, hybrid memory search — all in a single binary with zero dependencies.",
+    "keywords": "highclaw, ai agent, multi-agent, ai infrastructure, golang, chatbot framework, telegram bot, discord bot, slack bot, ai assistant, agent orchestration, memory system, model failover"
   },
   "sign": {
     "sign_in_title": "Sign In",

@@ -52,11 +52,10 @@ const nextConfig = {
     },
   },
   experimental: {
-    turbopackFileSystemCacheForDev: true,
-    // Disable mdxRs for Vercel deployment compatibility with fumadocs-mdx
-    ...(process.env.VERCEL ? {} : { mdxRs: true }),
+    // turbopackFileSystemCacheForDev: true, // disabled: causes memory overflow with large dynamic import context
+    // mdxRs: disabled for stability with fumadocs-mdx
   },
-  reactCompiler: true,
+  // reactCompiler: true, // disabled: causes OOM when compiling 37+ dynamically-imported block files
 };
 
 export default withBundleAnalyzer(withNextIntl(withMDX(nextConfig)));
