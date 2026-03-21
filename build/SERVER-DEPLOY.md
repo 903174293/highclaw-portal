@@ -104,7 +104,6 @@ sudo -E bash /path/to/build/server-deploy.sh
 | `NGINX_ENABLED` | `/etc/nginx/sites-enabled/highclaw-portal` | `sites-enabled` 下软链路径。 |
 | `SKIP_NGINX` | `0` | `1` = 完全不写 Nginx。 |
 | `SKIP_PM2` | `0` | `1` = 只解压，不启 PM2。 |
-| `SKIP_PROD_INSTALL` | `0` | `1` = 跳过解压后的 **`pnpm install --prod`**。 |
 | `FORCE_NGINX` | `0` | `1` = **更新** 时也重写 Nginx 并 reload。 |
 | `REMOVE_DEFAULT_SITE` | `0` | `1` = 在 **首次** 或 **`FORCE_NGINX=1` 的更新** 时尝试删除 `sites-enabled/default`。 |
 | `DEPLOY_NON_INTERACTIVE` | `0` | `1` = 非交互；**须**设置合法 `SERVER_NAMES`（见第二节）。 |
@@ -143,16 +142,16 @@ HTTPS 需自行 certbot 或 CDN；本脚本只生成 **HTTP 反代**。
 | 首次未装 nginx | 按脚本打印的 apt/dnf 安装后重跑，或 `SKIP_NGINX=1` 仅部署应用。 |
 | 更新后想改域名/端口 | `FORCE_NGINX=1` 再跑一次，或手改 conf 后 `nginx -t && systemctl reload nginx`。 |
 | `duplicate upstream "…"` | 两个 `sites-enabled` 文件里定义了同名 `upstream`。解决：① 使用本仓库**新版** `server-deploy.sh`（upstream 名为 `highclaw_portal_app`）；② 或删掉/合并重复站点配置，保证全机 `upstream` 名称唯一。 |
-| `Cannot find module`（如 **styled-jsx**） | 在应用目录执行 **`pnpm install --prod --ignore-scripts`**；打包容器勿用 **`rsync -aL`** 拷 standalone（用当前 **`package.sh`**：`rsync -a` + lock）。 |
+| `Cannot find module` | 多为打包时 **`rsync -aL`** 破坏了 standalone 软链；请用 **`build/package.sh`**（`rsync -a` 无 `-L`）重新打 tar。若仍缺，再考虑在**构建机**修 `next.config` 依赖追踪或本地补依赖后重建。 |
 | `DATABASE_URL is not set`（日志里 blog 相关） | 访问 **博客/依赖数据库的页面** 需要数据库。在 **`/var/www/highclaw-portal/.env.production`** 中配置 `DATABASE_URL=`（及项目要求的其它变量），然后 `pm2 restart highclaw-portal --update-env`。纯落地页可不配库，但不要访问 `/blog` 等需库的路由。 |
-| **`curl 127.0.0.1:3000` 拒绝连接** | 看 `~/.pm2/logs/*error.log`；缺模块就 `pnpm install --prod`。PM2 与手动一致：`cd` 到应用目录后 `export NODE_ENV=production HOSTNAME=0.0.0.0 PORT=3000`，`pm2 start server.js --name highclaw-portal`，`pm2 save`；开机自启自行执行一次 **`pm2 startup`**（脚本不代跑）。 |
+| **`curl 127.0.0.1:3000` 拒绝连接** | 看 `~/.pm2/logs/*error.log`。PM2：`cd` 应用目录 → `export NODE_ENV=production HOSTNAME=0.0.0.0 PORT=3000` → `pm2 start server.js --name highclaw-portal` → `pm2 save`；开机自启自行执行一次 **`pm2 startup`**。 |
 | `sudo` 后找不到变量 | 用第二节「同一行前缀变量」或 `sudo -E`。 |
 
 ---
 
 ## 九、部署后自检
 
-1. 服务器需安装 **pnpm**：`npm install -g pnpm`。部署脚本默认执行 **`pnpm install --prod --ignore-scripts`**（**不带** `--frozen-lockfile`，避免 `ERR_PNPM_LOCKFILE_CONFIG_MISMATCH`：本机与服务器 pnpm 版本或 `pnpm.overrides` 元数据不一致时 frozen 会拒绝安装）。若你手动安装，请用：`pnpm install --prod --ignore-scripts`。  
+1. 服务器仅需 **Node.js**（跑 `server.js`）与可选 **PM2**；**不必**装 pnpm（standalone 已带依赖）。  
 2. **`/var/www/highclaw-portal/.env.production`**：按需配置 `DATABASE_URL`、`AUTH_SECRET`、`NEXT_PUBLIC_*` 等。  
 3. 防火墙放行 **`LISTEN_PORT`**。  
 4. `curl -sI "http://127.0.0.1:${PORT}/"`（默认 3000）、`curl -sI "http://127.0.0.1:${LISTEN_PORT}/"`。  

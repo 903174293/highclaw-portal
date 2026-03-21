@@ -45,17 +45,16 @@ mkdir -p ~/deploy/highclaw-portal
 cd ~/deploy/highclaw-portal
 ```
 
-### 2.2 复制必要文件
+### 2.2 复制必要文件（与 Dockerfile 一致，**不必**在服务器再装依赖）
+
 ```bash
-# 复制构建产物
+mkdir -p ./.next
 cp -r /path/to/highclaw-portal/.next/standalone/* ./
 cp -r /path/to/highclaw-portal/.next/static ./.next/
 cp -r /path/to/highclaw-portal/public ./
-
-# 复制 package.json（用于生产依赖）
-cp /path/to/highclaw-portal/package.json ./
-cp /path/to/highclaw-portal/pnpm-lock.yaml ./
 ```
+
+可选：若你自行要 `pnpm install --prod` 补模块，可额外复制 `package.json` / `pnpm-lock.yaml`；**默认 standalone 已够用**。
 
 ### 2.3 创建部署压缩包
 ```bash
@@ -80,9 +79,6 @@ sudo apt update && sudo apt upgrade -y
 # 安装 Node.js 20
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt install -y nodejs
-
-# 安装 pnpm
-npm install -g pnpm
 
 # 安装 Nginx
 sudo apt install -y nginx
@@ -112,11 +108,9 @@ cd /var/www/highclaw-portal
 tar -xzf /tmp/highclaw-portal.tar.gz --strip-components=1
 ```
 
-### 4.3 安装生产依赖
-```bash
-cd /var/www/highclaw-portal
-pnpm install --prod
-```
+### 4.3 启动应用（standalone 无需 `pnpm install --prod`）
+
+见下文 **第六步**；若使用 `build/server-deploy.sh` 解压，脚本会处理 PM2。
 
 ---
 
@@ -178,9 +172,12 @@ sudo systemctl restart nginx
 
 ## 第六步：启动应用
 
-### 6.1 使用 PM2 启动
+### 6.1 使用 PM2 启动（监听 0.0.0.0 供本机 Nginx 反代）
 ```bash
 cd /var/www/highclaw-portal
+export NODE_ENV=production
+export HOSTNAME=0.0.0.0
+export PORT=3000
 pm2 start server.js --name "highclaw-portal"
 pm2 save
 pm2 startup
@@ -276,13 +273,14 @@ tar -czf highclaw-portal-v2.tar.gz highclaw-portal/
 # 3. 上传到服务器
 scp highclaw-portal-v2.tar.gz user@your-server-ip:/tmp/
 
-# 4. 在服务器上更新
+# 4. 在服务器上更新（与 server-deploy.sh 类似：备份/解压后重启 PM2）
 cd /var/www/highclaw-portal
-pm2 stop highclaw-portal
-rm -rf .next public
+pm2 stop highclaw-portal 2>/dev/null || true
+# 建议整目录替换或用手册里的 tar 流程，避免只删部分目录导致 standalone 不完整
 tar -xzf /tmp/highclaw-portal-v2.tar.gz --strip-components=1
-pnpm install --prod
-pm2 start highclaw-portal
+export NODE_ENV=production HOSTNAME=0.0.0.0 PORT=3000
+pm2 start server.js --name "highclaw-portal"
+pm2 save
 ```
 
 ---

@@ -35,7 +35,7 @@ pnpm run local:stop
 
 **脚本：`build/server-deploy.sh`**（在服务器上用 **root/sudo** 执行）
 
-**说明稍多时在 [`SERVER-DEPLOY.md`](./SERVER-DEPLOY.md)。** 打包容器会带上 `package.json` 与 `pnpm-lock.yaml`，部署时如有 pnpm 会尝试 `pnpm install --prod --ignore-scripts`（失败只告警，不中断）。
+**说明稍多时在 [`SERVER-DEPLOY.md`](./SERVER-DEPLOY.md)。** `package.sh` 只打 **standalone + `.next/static` + `public`**，与 Dockerfile 思路一致；**服务器上不执行** `pnpm install`。
 
 上传 `highclaw-portal.tar.gz` 与仓库里的 **`build/server-deploy.sh`**。
 

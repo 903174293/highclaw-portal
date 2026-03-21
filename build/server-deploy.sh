@@ -18,7 +18,6 @@
 #
 # Env: TARGET_DIR, PM2_NAME, PORT, LISTEN_PORT, SERVER_NAMES, NGINX_SITE,
 #      NGINX_ENABLED, REMOVE_DEFAULT_SITE, DEPLOY_NON_INTERACTIVE
-#      SKIP_PROD_INSTALL=1  Skip pnpm/npm prod install (offline-only tarball)
 #
 # First deploy + Nginx: creates /etc/nginx/sites-available, writes upstream highclaw_portal_app + server{}.
 # (Avoid generic name "next_app" — duplicates another site e.g. highclaw.conf.)
@@ -145,7 +144,6 @@ SKIP_PM2="${SKIP_PM2:-0}"
 FORCE_NGINX="${FORCE_NGINX:-0}"
 REMOVE_DEFAULT_SITE="${REMOVE_DEFAULT_SITE:-0}"
 DEPLOY_MODE="${DEPLOY_MODE:-}"
-SKIP_PROD_INSTALL="${SKIP_PROD_INSTALL:-0}"
 
 PARENT="$(dirname "$TARGET_DIR")"
 
@@ -259,29 +257,7 @@ if [[ ! -f "$TARGET_DIR/server.js" ]]; then
   exit 1
 fi
 log "OK: extracted server.js present"
-
-# 与 DEPLOYMENT_GUIDE 一致：tar 内带有 package.json + pnpm-lock.yaml 时，在服务器执行生产依赖安装，修复 standalone 软链/漏追踪问题
-log_step "Application: production dependencies"
-if [[ "$SKIP_PROD_INSTALL" == "1" ]]; then
-  log "SKIP_PROD_INSTALL=1 — skipped (tarball must be self-contained; install pnpm on server otherwise)"
-elif [[ -f "$TARGET_DIR/pnpm-lock.yaml" ]] && command -v pnpm >/dev/null 2>&1; then
-  log "Running: cd $TARGET_DIR && pnpm install --prod --ignore-scripts"
-  if ! ( cd "$TARGET_DIR" && pnpm install --prod --ignore-scripts ); then
-    log "WARN: pnpm install failed — continue (legacy/离线包可改 SKIP_PROD_INSTALL=1 或手装依赖)"
-  else
-    log "OK: pnpm install --prod finished"
-  fi
-elif [[ -f "$TARGET_DIR/package.json" ]]; then
-  if command -v pnpm >/dev/null 2>&1; then
-    log "WARN: pnpm-lock.yaml missing, pnpm install --prod --ignore-scripts"
-    ( cd "$TARGET_DIR" && pnpm install --prod --ignore-scripts ) || log "WARN: pnpm install failed"
-  else
-    log "pnpm not found; npm install --omit=dev --ignore-scripts"
-    ( cd "$TARGET_DIR" && npm install --omit=dev --no-audit --no-fund --ignore-scripts ) || log "WARN: npm install failed"
-  fi
-else
-  log "WARN: no package.json in release — skipping prod install"
-fi
+# standalone 包已含运行所需 node_modules，不在服务器执行 pnpm/npm install
 
 if [[ -n "${SUDO_USER:-}" ]]; then
   log "chown to $SUDO_USER:$SUDO_USER"

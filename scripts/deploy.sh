@@ -45,10 +45,9 @@ rm -rf "$DEPLOY_TEMP"
 mkdir -p "$DEPLOY_TEMP/highclaw-portal"
 
 cp -r .next/standalone/* "$DEPLOY_TEMP/highclaw-portal/"
+mkdir -p "$DEPLOY_TEMP/highclaw-portal/.next"
 cp -r .next/static "$DEPLOY_TEMP/highclaw-portal/.next/"
 cp -r public "$DEPLOY_TEMP/highclaw-portal/"
-cp package.json "$DEPLOY_TEMP/highclaw-portal/"
-cp pnpm-lock.yaml "$DEPLOY_TEMP/highclaw-portal/"
 
 cd "$DEPLOY_TEMP"
 tar -czf highclaw-portal.tar.gz highclaw-portal/
@@ -72,14 +71,14 @@ ssh "$USERNAME@$SERVER_IP" << 'EOF'
     # 清理旧文件
     sudo rm -rf /var/www/highclaw-portal/*
     
-    # 解压新文件
+    # 解压新文件（standalone 已含 node_modules，无需在服务器 pnpm install）
     cd /var/www/highclaw-portal
     tar -xzf /tmp/highclaw-portal.tar.gz --strip-components=1
     
-    # 安装生产依赖
-    pnpm install --prod
-    
-    # 启动应用
+    export NODE_ENV=production
+    export HOSTNAME=0.0.0.0
+    export PORT=3000
+    pm2 delete highclaw-portal 2>/dev/null || true
     pm2 start server.js --name "highclaw-portal"
     pm2 save
     
