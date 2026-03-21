@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 # Pack Next.js standalone into deploy/highclaw-portal/ and deploy/highclaw-portal.tar.gz
 # Scripts live under build/; artifacts under deploy/ (gitignored).
+#
+# 与 DEPLOYMENT_GUIDE.md 一致：
+# - 复制 standalone 时**不要** rsync -L（解引用软链会破坏 pnpm 在 .next/standalone 里的布局，导致缺 styled-jsx/@swc 等）
+# - 一并打入 package.json + pnpm-lock.yaml + .npmrc，供服务器上 pnpm install --prod 修复/补全 node_modules
+#
 # Usage: ./build/package.sh              # run pnpm build, then pack
 #        ./build/package.sh --no-build  # pack only from existing .next
 
@@ -42,8 +47,9 @@ echo ">>> Clearing staging dir: $PKG_DIR"
 rm -rf "$PKG_DIR"
 mkdir -p "$PKG_DIR" "$PKG_DIR/.next"
 
-echo ">>> rsync standalone (dereference symlinks)"
-rsync -aL "$ROOT/.next/standalone/" "$PKG_DIR/"
+# 使用 -a 保留软链（等同手册里的 cp -r），**禁止** -L：解引用曾导致 standalone 内模块树损坏
+echo ">>> rsync standalone (preserve symlinks, no -L)"
+rsync -a "$ROOT/.next/standalone/" "$PKG_DIR/"
 
 echo ">>> rsync .next/static"
 rsync -a "$ROOT/.next/static/" "$PKG_DIR/.next/static/"
@@ -51,10 +57,18 @@ rsync -a "$ROOT/.next/static/" "$PKG_DIR/.next/static/"
 echo ">>> rsync public"
 rsync -a "$ROOT/public/" "$PKG_DIR/public/"
 
+# 服务器上由 server-deploy.sh 执行 pnpm install --prod（与 DEPLOYMENT_GUIDE 第二步一致）
+for f in package.json pnpm-lock.yaml .npmrc; do
+  if [[ -f "$ROOT/$f" ]]; then
+    echo ">>> Copy $f (for server-side prod install)"
+    cp -a "$ROOT/$f" "$PKG_DIR/$f"
+  fi
+done
+
 echo ">>> Creating archive: $OUT_TAR"
 rm -f "$OUT_TAR"
 export COPYFILE_DISABLE=1
 tar -czf "$OUT_TAR" -C "$DEPLOY_ROOT" highclaw-portal
 
 ls -lh "$OUT_TAR"
-echo ">>> Done. Upload deploy/highclaw-portal.tar.gz; on server: sudo bash build/server-deploy.sh <path-to-tar> (see build/README.md)"
+echo ">>> Done. Upload deploy/highclaw-portal.tar.gz; on server: sudo bash build/server-deploy.sh (see build/SERVER-DEPLOY.md)"

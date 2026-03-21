@@ -18,8 +18,10 @@
 #
 # Env: TARGET_DIR, PM2_NAME, PORT, LISTEN_PORT, SERVER_NAMES, NGINX_SITE,
 #      NGINX_ENABLED, REMOVE_DEFAULT_SITE, DEPLOY_NON_INTERACTIVE
+#      SKIP_PROD_INSTALL=1  Skip pnpm/npm prod install (offline-only tarball)
 #
-# First deploy + Nginx: creates /etc/nginx/sites-available, writes upstream next_app + server{}.
+# First deploy + Nginx: creates /etc/nginx/sites-available, writes upstream highclaw_portal_app + server{}.
+# (Avoid generic name "next_app" — duplicates another site e.g. highclaw.conf.)
 # Interactive (TTY): prompts for server_name, LISTEN_PORT, PORT unless SERVER_NAMES is exported.
 # No TTY: DEPLOY_NON_INTERACTIVE=1 and SERVER_NAMES='host1 host2 1.2.3.4' (not "_" alone).
 
@@ -143,6 +145,7 @@ SKIP_PM2="${SKIP_PM2:-0}"
 FORCE_NGINX="${FORCE_NGINX:-0}"
 REMOVE_DEFAULT_SITE="${REMOVE_DEFAULT_SITE:-0}"
 DEPLOY_MODE="${DEPLOY_MODE:-}"
+SKIP_PROD_INSTALL="${SKIP_PROD_INSTALL:-0}"
 
 PARENT="$(dirname "$TARGET_DIR")"
 
@@ -257,6 +260,29 @@ if [[ ! -f "$TARGET_DIR/server.js" ]]; then
 fi
 log "OK: extracted server.js present"
 
+# 与 DEPLOYMENT_GUIDE 一致：tar 内带有 package.json + pnpm-lock.yaml 时，在服务器执行生产依赖安装，修复 standalone 软链/漏追踪问题
+log_step "Application: production dependencies"
+if [[ "$SKIP_PROD_INSTALL" == "1" ]]; then
+  log "SKIP_PROD_INSTALL=1 — skipped (tarball must be self-contained; install pnpm on server otherwise)"
+elif [[ -f "$TARGET_DIR/pnpm-lock.yaml" ]] && command -v pnpm >/dev/null 2>&1; then
+  log "Running: cd $TARGET_DIR && pnpm install --prod --ignore-scripts"
+  if ! ( cd "$TARGET_DIR" && pnpm install --prod --ignore-scripts ); then
+    log "WARN: pnpm install failed — continue (legacy/离线包可改 SKIP_PROD_INSTALL=1 或手装依赖)"
+  else
+    log "OK: pnpm install --prod finished"
+  fi
+elif [[ -f "$TARGET_DIR/package.json" ]]; then
+  if command -v pnpm >/dev/null 2>&1; then
+    log "WARN: pnpm-lock.yaml missing, pnpm install --prod --ignore-scripts"
+    ( cd "$TARGET_DIR" && pnpm install --prod --ignore-scripts ) || log "WARN: pnpm install failed"
+  else
+    log "pnpm not found; npm install --omit=dev --ignore-scripts"
+    ( cd "$TARGET_DIR" && npm install --omit=dev --no-audit --no-fund --ignore-scripts ) || log "WARN: npm install failed"
+  fi
+else
+  log "WARN: no package.json in release — skipping prod install"
+fi
+
 if [[ -n "${SUDO_USER:-}" ]]; then
   log "chown to $SUDO_USER:$SUDO_USER"
   chown -R "$SUDO_USER:$SUDO_USER" "$TARGET_DIR" || true
@@ -273,19 +299,16 @@ else
     echo "  Install PM2 globally:"
     echo "       npm install -g pm2"
   else
+    # 与手动一致：cd 后 export，再 pm2 start；开机自启请自行执行一次 pm2 startup（脚本不代跑，需交互 sudo）
     export NODE_ENV=production
     export HOSTNAME=0.0.0.0
+    export PORT
     cd "$TARGET_DIR"
-    if pm2 describe "$PM2_NAME" >/dev/null 2>&1; then
-      log "PM2: restarting $PM2_NAME (update)"
-      pm2 restart "$PM2_NAME" --update-env
-    else
-      log "PM2: first start $PM2_NAME"
-      pm2 start server.js --name "$PM2_NAME" --cwd "$TARGET_DIR"
-    fi
+    pm2 delete "$PM2_NAME" 2>/dev/null || true
+    log "PM2: start $PM2_NAME (same as: export NODE_ENV HOSTNAME PORT && pm2 start server.js --name $PM2_NAME)"
+    pm2 start server.js --name "$PM2_NAME"
     pm2 save
-    log "PM2: saved process list"
-    log "OK: curl -sI http://127.0.0.1:${PORT}/ | head -5"
+    log "PM2: saved (run 'pm2 startup' once on this host if you need boot persistence)"
   fi
 fi
 
@@ -305,7 +328,7 @@ else
   log "OK: ensured /etc/nginx/sites-available and sites-enabled exist"
 
   cat >"$NGINX_SITE" <<EOF
-upstream next_app {
+upstream highclaw_portal_app {
     server 127.0.0.1:${PORT};
     keepalive 64;
 }
@@ -316,7 +339,7 @@ server {
     server_name ${SERVER_NAMES};
 
     location / {
-        proxy_pass http://next_app;
+        proxy_pass http://highclaw_portal_app;
         proxy_http_version 1.1;
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
@@ -327,7 +350,7 @@ server {
     }
 }
 EOF
-  log "OK: site file written (upstream next_app -> 127.0.0.1:${PORT})"
+  log "OK: site file written (upstream highclaw_portal_app -> 127.0.0.1:${PORT})"
 
   if [[ "$REMOVE_DEFAULT_SITE" == "1" ]] && [[ -e /etc/nginx/sites-enabled/default ]]; then
     if [[ "$MODE" == "first" ]] || [[ "$FORCE_NGINX" == "1" ]]; then

@@ -17,12 +17,13 @@ const nextConfig = {
   output: process.env.VERCEL ? undefined : 'standalone',
   reactStrictMode: false,
   pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
-  // standalone 文件追踪偶发漏包：@libsql→ws、Next 运行时要 styled-jsx/package.json 等，显式纳入
+  // standalone 文件追踪偶发漏包：@libsql→ws、styled-jsx、Next 运行时 @swc/helpers 子路径等，显式纳入
   outputFileTracingIncludes: {
     '/**': [
       './node_modules/ws/**/*',
       './node_modules/@libsql/**/*',
       './node_modules/styled-jsx/**/*',
+      './node_modules/@swc/helpers/**/*',
     ],
   },
   images: {

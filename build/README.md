@@ -35,6 +35,8 @@ pnpm run local:stop
 
 **脚本：`build/server-deploy.sh`**（在服务器上用 **root/sudo** 执行）
 
+**说明稍多时在 [`SERVER-DEPLOY.md`](./SERVER-DEPLOY.md)。** 打包容器会带上 `package.json` 与 `pnpm-lock.yaml`，部署时如有 pnpm 会尝试 `pnpm install --prod --ignore-scripts`（失败只告警，不中断）。
+
 上传 `highclaw-portal.tar.gz` 与仓库里的 **`build/server-deploy.sh`**。
 
 **推荐**：先 `cd` 到 **tar.gz 所在目录** 再执行（可无参数，默认使用当前目录下的 `highclaw-portal.tar.gz`）：
@@ -50,7 +52,7 @@ sudo bash /path/to/repo/build/server-deploy.sh ./highclaw-portal.tar.gz
 
 | 模式 | 判定 | 行为概要 |
 |------|------|----------|
-| **首次** | 不存在 `$TARGET_DIR/server.js` | 解压、PM2、**创建** `/etc/nginx/sites-available`（若缺）、写入站点（`upstream next_app` + `proxy_pass http://next_app`）、`nginx -t`、启动或 reload；未装 Nginx 会 **退出并附安装说明** |
+| **首次** | 不存在 `$TARGET_DIR/server.js` | 解压、PM2、**创建** `/etc/nginx/sites-available`（若缺）、写入站点（`upstream highclaw_portal_app`，避免与站内其它 `next_app` 冲突）、`nginx -t`、启动或 reload；未装 Nginx 会 **退出并附安装说明** |
 | **更新** | 已存在上述文件 | 解压、**仅 PM2 重启**；**不重写**已有 Nginx、**不 reload**（除非 `FORCE_NGINX=1`） |
 
 **首次 Nginx：交互定制（有终端时）**

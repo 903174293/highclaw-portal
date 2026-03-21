@@ -302,7 +302,8 @@
       "/**": [
         "./node_modules/ws/**/*",
         "./node_modules/@libsql/**/*",
-        "./node_modules/styled-jsx/**/*"
+        "./node_modules/styled-jsx/**/*",
+        "./node_modules/@swc/helpers/**/*"
       ]
     },
     "turbopack": {
