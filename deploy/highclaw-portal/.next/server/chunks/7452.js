@@ -1,0 +1,1 @@
+"use strict";exports.id=7452,exports.ids=[7452],exports.modules={27452:a=>{a.exports=JSON.parse('{"fields":{"title":"Title","key":"Key","user":"User","status":"Status","created_at":"Created At","action":"Action"},"list":{"title":"API Keys","crumbs":{"admin":"Admin","apikeys":"API Keys"}}}')}};

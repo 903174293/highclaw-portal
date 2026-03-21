@@ -1,0 +1,1 @@
+"use strict";exports.id=4183,exports.ids=[4183],exports.modules={44183:(a,b,c)=>{c.r(b),c.d(b,{default:()=>f});var d=c(72388),e=c(43474);async function f({locale:a,post:b}){let c=await (0,e.Vs)("page-detail");return(0,d.jsx)(c,{post:b})}}};

@@ -17,6 +17,14 @@ const nextConfig = {
   output: process.env.VERCEL ? undefined : 'standalone',
   reactStrictMode: false,
   pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
+  // standalone 文件追踪偶发漏包：@libsql→ws、Next 运行时要 styled-jsx/package.json 等，显式纳入
+  outputFileTracingIncludes: {
+    '/**': [
+      './node_modules/ws/**/*',
+      './node_modules/@libsql/**/*',
+      './node_modules/styled-jsx/**/*',
+    ],
+  },
   images: {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],

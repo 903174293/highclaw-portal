@@ -1,0 +1,1 @@
+"use strict";exports.id=4717,exports.ids=[4717],exports.modules={44717:a=>{a.exports=JSON.parse('{"fields":{"id":"ID","code":"权限码","title":"标题","resource":"资源","action":"操作","description":"描述","created_at":"创建时间","updated_at":"更新时间"},"list":{"title":"权限","crumbs":{"admin":"管理后台","permissions":"权限"}}}')}};

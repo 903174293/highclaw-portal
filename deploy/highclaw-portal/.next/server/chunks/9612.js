@@ -1,0 +1,1 @@
+"use strict";exports.id=9612,exports.ids=[9612],exports.modules={9612:a=>{a.exports=JSON.parse('{"fields":{"email":"邮箱","name":"名称","avatar":"头像"},"edit":{"title":"个人资料","description":"更新你的个人资料","crumbs":{"settings":"设置","profile":"个人资料"},"buttons":{"submit":"保存"}}}')}};

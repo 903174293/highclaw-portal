@@ -1,0 +1,1 @@
+"use strict";exports.id=1421,exports.ids=[1421],exports.modules={81421:(a,b,c)=>{c.r(b),c.d(b,{default:()=>f});var d=c(72388),e=c(43474);async function f({children:a,header:b,footer:c}){let f=await (0,e.Vs)("header"),g=await (0,e.Vs)("footer");return(0,d.jsxs)("div",{className:"h-screen w-screen",children:[(0,d.jsx)(f,{header:b}),a,(0,d.jsx)(g,{footer:c})]})}}};

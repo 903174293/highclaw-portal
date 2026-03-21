@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { Link } from '@/core/i18n/navigation';
 import { Brand as BrandType } from '@/shared/types/blocks/common';
 
+/** 品牌 Logo + 标题，用于顶栏/页脚等 */
 export function BrandLogo({ brand }: { brand: BrandType }) {
   return (
     <Link

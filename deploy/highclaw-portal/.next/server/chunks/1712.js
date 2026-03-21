@@ -1,0 +1,1 @@
+"use strict";exports.id=1712,exports.ids=[1712],exports.modules={31712:a=>{a.exports=JSON.parse('{"metadata":{"title":"更新日志","description":"查看产品更新日志，了解产品最新功能和改进。"},"page":{"sections":{"updates":{"id":"updates","title":"更新日志","description":"查看产品更新日志，了解产品最新功能和改进。"}}}}')}};

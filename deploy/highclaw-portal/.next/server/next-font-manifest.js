@@ -1,0 +1,1 @@
+self.__NEXT_FONT_MANIFEST='{"pages":{},"app":{"/Users/weimianzhizizhangwanbin/Data/DevRepository/Git/highclaw-portal/src/app/layout":["static/media/1f3fe8c6df3d47c1-s.p.woff2","static/media/bb3ef058b751a6ad-s.p.woff2","static/media/ec14413c594b3356-s.p.woff2"]},"appUsingSizeAdjust":true,"pagesUsingSizeAdjust":false}';

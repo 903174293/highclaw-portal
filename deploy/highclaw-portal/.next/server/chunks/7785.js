@@ -1,0 +1,1 @@
+"use strict";exports.id=7785,exports.ids=[7785],exports.modules={97785:a=>{a.exports=JSON.parse('{"fields":{"title":"名称","key":"密钥","user":"用户","status":"状态","created_at":"创建时间","action":"操作"},"list":{"title":"API密钥","crumbs":{"admin":"管理后台","apikeys":"API密钥"}}}')}};

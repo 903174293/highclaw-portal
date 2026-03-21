@@ -1,0 +1,1 @@
+"use strict";exports.id=9722,exports.ids=[9722],exports.modules={9722:a=>{a.exports=JSON.parse('{"metadata":{"title":"博客","description":"阅读我们最新的产品功能、解决方案和更新内容。"},"page":{"title":"ShipAny 博客","sections":{"blog":{"id":"blog","title":"博客","description":"阅读我们最新的产品功能、解决方案和更新内容。"}}},"messages":{"all":"全部","no_content":"暂无内容","crumb":"博客","toc":"目录"}}')}};

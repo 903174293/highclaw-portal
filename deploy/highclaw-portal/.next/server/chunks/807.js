@@ -1,0 +1,1 @@
+"use strict";exports.id=807,exports.ids=[807],exports.modules={30807:a=>{a.exports=JSON.parse('{"fields":{"email":"Email","name":"Name","avatar":"Avatar"},"edit":{"title":"Profile","description":"Update your profile","crumbs":{"settings":"Settings","profile":"Profile"},"buttons":{"submit":"Save"}}}')}};

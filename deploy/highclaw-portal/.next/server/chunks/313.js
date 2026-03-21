@@ -1,0 +1,1 @@
+"use strict";exports.id=313,exports.ids=[313],exports.modules={80313:a=>{a.exports=JSON.parse('{"metadata":{"title":"Update Logs","description":"View product update logs, including latest features and improvements."},"page":{"sections":{"updates":{"id":"updates","title":"Update Logs","description":"View product update logs, including latest features and improvements."}}}}')}};

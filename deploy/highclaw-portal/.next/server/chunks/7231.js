@@ -1,0 +1,1 @@
+"use strict";exports.id=7231,exports.ids=[7231],exports.modules={89612:a=>{a.exports=JSON.parse('{"fields":{"id":"ID","code":"Code","title":"Title","resource":"Resource","action":"Action","description":"Description","created_at":"Created At","updated_at":"Updated At"},"list":{"title":"Permissions","crumbs":{"admin":"Admin","permissions":"Permissions"}}}')}};
