@@ -1,8 +1,18 @@
-import { ComponentType, lazy, Suspense } from 'react';
+'use client';
+
+import {
+  ComponentType,
+  lazy,
+  Suspense,
+  useEffect,
+  useState,
+} from 'react';
 
 const iconCache: { [key: string]: ComponentType<any> } = {};
 
-// Function to automatically detect icon library
+/**
+ * 判断图标来自 react-icons/ri 还是 lucide-react
+ */
 function detectIconLibrary(name: string): 'ri' | 'lucide' {
   if (name && name.startsWith('Ri')) {
     return 'ri';
@@ -11,6 +21,9 @@ function detectIconLibrary(name: string): 'ri' | 'lucide' {
   return 'lucide';
 }
 
+/**
+ * 按名称懒加载图标。挂载后再渲染真实 SVG，避免 SSR 与客户端 Suspense 边界不一致触发 hydration 报错。
+ */
 export function SmartIcon({
   name,
   size = 24,
@@ -22,6 +35,12 @@ export function SmartIcon({
   className?: string;
   [key: string]: any;
 }) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const library = detectIconLibrary(name);
   const cacheKey = `${library}-${name}`;
 
@@ -73,8 +92,20 @@ export function SmartIcon({
 
   const IconComponent = iconCache[cacheKey];
 
+  const placeholder = (
+    <div
+      style={{ width: size, height: size }}
+      className={className}
+      aria-hidden
+    />
+  );
+
+  if (!mounted) {
+    return placeholder;
+  }
+
   return (
-    <Suspense fallback={<div style={{ width: size, height: size }} />}>
+    <Suspense fallback={placeholder}>
       <IconComponent size={size} className={className} {...props} />
     </Suspense>
   );

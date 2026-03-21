@@ -301,7 +301,8 @@
     "outputFileTracingIncludes": {
       "/**": [
         "./node_modules/ws/**/*",
-        "./node_modules/@libsql/**/*"
+        "./node_modules/@libsql/**/*",
+        "./node_modules/styled-jsx/**/*"
       ]
     },
     "turbopack": {

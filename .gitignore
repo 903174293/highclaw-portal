@@ -17,12 +17,21 @@
 /.next/
 /out/
 
-# production
-/build
+# production（通用；本仓库脚本在 build/ 下，勿用 /build 整目录忽略）
+# /build
+
+# 部署打包：中间目录 + tar.gz 均在 deploy/（build/ 仅脚本，可提交）
+/deploy/
+.turbo/
+dist/
+*.tgz
+*.tar.gz
 
 # misc
 .DS_Store
 *.pem
+.local-dev.pid
+.local-dev.log
 
 # debug
 npm-debug.log*

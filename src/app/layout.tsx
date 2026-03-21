@@ -108,8 +108,14 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <link rel="icon" href={envConfigs.app_favicon} />
-        <link rel="alternate icon" href="/favicon.ico" />
+        <link
+          rel="icon"
+          type="image/png"
+          href={envConfigs.app_favicon}
+        />
+        {/* 与 public/favicon.ico 一致（已为 HighClaw 图），兼容硬编码 /favicon.ico 的客户端 */}
+        <link rel="alternate icon" type="image/png" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href={envConfigs.app_logo} />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
         {/* inject locales */}

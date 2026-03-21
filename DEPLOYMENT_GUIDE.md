@@ -1,5 +1,8 @@
 # 🚀 Highclaw Portal 部署指南 - Ubuntu + Nginx
 
+> **自动化打包**：`make ship` / `make release` → 产物 **`deploy/highclaw-portal.tar.gz`**。  
+> **服务器一键**：上传 tar 与 **`build/server-deploy.sh`** 后执行 `sudo bash server-deploy.sh /path/to/tar.gz`（与本地 `local-dev.sh` 无关）。详见 **`build/README.md`**。
+
 ## 📋 前置条件
 
 - **本地环境**: macOS/Linux，已安装 Node.js 20+、pnpm
