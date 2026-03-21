@@ -35,7 +35,7 @@ pnpm run local:stop
 
 **脚本：`build/server-deploy.sh`**（在服务器上用 **root/sudo** 执行）
 
-**说明稍多时在 [`SERVER-DEPLOY.md`](./SERVER-DEPLOY.md)。** `package.sh` 只打 **standalone + `.next/static` + `public`**，与 Dockerfile 思路一致；**服务器上不执行** `pnpm install`。
+**说明稍多时在 [`SERVER-DEPLOY.md`](./SERVER-DEPLOY.md)。** `package.sh`：`standalone` 用 **`rsync -aL`**（软链落成实体，免服务器断链），`static`/`public` 用 **`rsync -a`**；**服务器上不执行** `pnpm install`。
 
 上传 `highclaw-portal.tar.gz` 与仓库里的 **`build/server-deploy.sh`**。
 

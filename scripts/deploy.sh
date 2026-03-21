@@ -38,25 +38,21 @@ pnpm build
 echo -e "${GREEN}✅ 构建完成${NC}"
 echo ""
 
-# 步骤 2: 准备部署包
+# 步骤 2: 准备部署包（与 make ship 一致：build/package.sh，standalone 用 rsync -aL）
 echo -e "${YELLOW}[2/5] 📦 准备部署包...${NC}"
-DEPLOY_TEMP="/tmp/highclaw-portal-deploy"
-rm -rf "$DEPLOY_TEMP"
-mkdir -p "$DEPLOY_TEMP/highclaw-portal"
-
-cp -r .next/standalone/* "$DEPLOY_TEMP/highclaw-portal/"
-mkdir -p "$DEPLOY_TEMP/highclaw-portal/.next"
-cp -r .next/static "$DEPLOY_TEMP/highclaw-portal/.next/"
-cp -r public "$DEPLOY_TEMP/highclaw-portal/"
-
-cd "$DEPLOY_TEMP"
-tar -czf highclaw-portal.tar.gz highclaw-portal/
+DEPLOY_TAR="$PROJECT_ROOT/deploy/highclaw-portal.tar.gz"
+chmod +x "$PROJECT_ROOT/build/package.sh" 2>/dev/null || true
+bash "$PROJECT_ROOT/build/package.sh" --no-build
+if [[ ! -f "$DEPLOY_TAR" ]]; then
+  echo -e "${RED}❌ 未生成 $DEPLOY_TAR${NC}"
+  exit 1
+fi
 echo -e "${GREEN}✅ 部署包准备完成${NC}"
 echo ""
 
 # 步骤 3: 上传到服务器
 echo -e "${YELLOW}[3/5] 📤 上传到服务器...${NC}"
-scp highclaw-portal.tar.gz "$USERNAME@$SERVER_IP:/tmp/"
+scp "$DEPLOY_TAR" "$USERNAME@$SERVER_IP:/tmp/highclaw-portal.tar.gz"
 echo -e "${GREEN}✅ 上传完成${NC}"
 echo ""
 
@@ -102,7 +98,4 @@ echo -e "${GREEN}🎉 部署完成！${NC}"
 echo "访问地址: http://$SERVER_IP"
 echo "查看日志: ssh $USERNAME@$SERVER_IP 'pm2 logs highclaw-portal'"
 echo "重启应用: ssh $USERNAME@$SERVER_IP 'pm2 restart highclaw-portal'"
-
-# 清理临时文件
-rm -rf "$DEPLOY_TEMP"
 

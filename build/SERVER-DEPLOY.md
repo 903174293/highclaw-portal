@@ -142,7 +142,7 @@ HTTPS 需自行 certbot 或 CDN；本脚本只生成 **HTTP 反代**。
 | 首次未装 nginx | 按脚本打印的 apt/dnf 安装后重跑，或 `SKIP_NGINX=1` 仅部署应用。 |
 | 更新后想改域名/端口 | `FORCE_NGINX=1` 再跑一次，或手改 conf 后 `nginx -t && systemctl reload nginx`。 |
 | `duplicate upstream "…"` | 两个 `sites-enabled` 文件里定义了同名 `upstream`。解决：① 使用本仓库**新版** `server-deploy.sh`（upstream 名为 `highclaw_portal_app`）；② 或删掉/合并重复站点配置，保证全机 `upstream` 名称唯一。 |
-| `Cannot find module` | 多为打包时 **`rsync -aL`** 破坏了 standalone 软链；请用 **`build/package.sh`**（`rsync -a` 无 `-L`）重新打 tar。若仍缺，再考虑在**构建机**修 `next.config` 依赖追踪或本地补依赖后重建。 |
+| `Cannot find module` | 用 **`build/package.sh` / `make ship`** 重打 tar（standalone 为 **`rsync -aL`**）；若仍缺，检查 **`next.config.mjs`** 的 `outputFileTracingIncludes` 或本地依赖是否完整后重建。 |
 | `DATABASE_URL is not set`（日志里 blog 相关） | 访问 **博客/依赖数据库的页面** 需要数据库。在 **`/var/www/highclaw-portal/.env.production`** 中配置 `DATABASE_URL=`（及项目要求的其它变量），然后 `pm2 restart highclaw-portal --update-env`。纯落地页可不配库，但不要访问 `/blog` 等需库的路由。 |
 | **`curl 127.0.0.1:3000` 拒绝连接** | 看 `~/.pm2/logs/*error.log`。PM2：`cd` 应用目录 → `export NODE_ENV=production HOSTNAME=0.0.0.0 PORT=3000` → `pm2 start server.js --name highclaw-portal` → `pm2 save`；开机自启自行执行一次 **`pm2 startup`**。 |
 | `sudo` 后找不到变量 | 用第二节「同一行前缀变量」或 `sudo -E`。 |
