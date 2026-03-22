@@ -1,9 +1,17 @@
 # HighClaw Portal — build & pack (Makefile)
-# Run: make help
+# Run: make help（勿用「make Makefile」；需 GNU make，macOS /usr/bin/make 即可）
+
+.DEFAULT_GOAL := help
 
 .PHONY: help all install build pack package release ship clean install-ci start start-bg stop
 
 PNPM ?= pnpm
+# 与 build/package.sh 一致：默认同 `pnpm build`；内存不够: make ship PACK_BUILD_SCRIPT=build:fast
+# 注意：若 shell 里 export 了空的 PACK_BUILD_SCRIPT，?= 不会覆盖空串，会导致 `pnpm run` 无脚本名而失败
+PACK_BUILD_SCRIPT ?= build:server
+ifeq ($(strip $(PACK_BUILD_SCRIPT)),)
+override PACK_BUILD_SCRIPT := build:server
+endif
 PKG_SCRIPT := $(CURDIR)/build/package.sh
 LOCAL_DEV_SCRIPT := $(CURDIR)/build/local-dev.sh
 
@@ -16,7 +24,7 @@ help:
 	@echo ""
 	@echo "  make install      Install deps (pnpm install)"
 	@echo "  make install-ci   CI install (frozen lockfile)"
-	@echo "  make build        Production build only (pnpm run build:server)"
+	@echo "  make build        Production build (pnpm run build:server, webpack)"
 	@echo "  make pack         Pack tar only (requires existing .next, no rebuild)"
 	@echo "  make package      Same as pack"
 	@echo "  make release / all  install + build + pack tar (sequential)"
@@ -46,17 +54,20 @@ install-ci:
 	$(PNPM) install --frozen-lockfile
 
 build:
-	$(PNPM) run build:server
+	$(PNPM) run $(PACK_BUILD_SCRIPT)
 
-pack package:
+# 拆成 pack + package 依赖，避免个别 make 对「双目标同一配方」解析异常
+pack:
 	@chmod +x $(PKG_SCRIPT) 2>/dev/null || true
 	bash $(PKG_SCRIPT) --no-build
+
+package: pack
 
 # Sequential so install/build never run in parallel under make -j
 release:
 	@chmod +x $(PKG_SCRIPT) 2>/dev/null || true
 	$(PNPM) install
-	$(PNPM) run build:server
+	$(PNPM) run $(PACK_BUILD_SCRIPT)
 	bash $(PKG_SCRIPT) --no-build
 
 ship: build

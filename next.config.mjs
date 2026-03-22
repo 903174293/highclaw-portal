@@ -24,6 +24,8 @@ const nextConfig = {
       './node_modules/@libsql/**/*',
       './node_modules/styled-jsx/**/*',
       './node_modules/@swc/helpers/**/*',
+      './node_modules/acorn-jsx/**/*',
+      './node_modules/detect-libc/**/*',
     ],
   },
   images: {

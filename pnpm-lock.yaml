@@ -39,6 +39,9 @@ importers:
       '@libsql/client':
         specifier: ^0.15.9
         version: 0.15.15
+      '@libsql/linux-x64-gnu':
+        specifier: 0.5.22
+        version: 0.5.22
       '@next/bundle-analyzer':
         specifier: 16.0.7
         version: 16.0.7
@@ -7313,8 +7316,7 @@ snapshots:
   '@libsql/linux-arm64-musl@0.5.22':
     optional: true
 
-  '@libsql/linux-x64-gnu@0.5.22':
-    optional: true
+  '@libsql/linux-x64-gnu@0.5.22': {}
 
   '@libsql/linux-x64-musl@0.5.22':
     optional: true
