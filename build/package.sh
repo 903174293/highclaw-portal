@@ -6,6 +6,10 @@
 # 因此必须用 rsync -a（保留软链），禁止 -L（解引用会破坏模块解析路径）。
 #
 # Usage: ./build/package.sh [--no-build]
+#
+# 包内环境文件：始终写入 staging 为 .env.production
+#   - 若仓库根存在 .env.production → 原样打入包（勿把含密钥的 tar 传到不可信渠道）
+#   - 否则若存在 .env.production.example → 复制为 .env.production（模板，部署前请在服务器核对/补全）
 
 set -euo pipefail
 
@@ -21,6 +25,7 @@ for arg in "$@"; do
       echo "Usage: $0 [--no-build]"
       echo "  --no-build   skip build, pack existing .next"
       echo "  Env: PACK_BUILD_SCRIPT=build:fast  override build script name"
+      echo "  包内 .env.production：优先根目录 .env.production，否则用 .env.production.example"
       exit 0
       ;;
   esac
@@ -65,10 +70,15 @@ rsync -a "$ROOT/.next/static/" "$PKG_DIR/.next/static/"
 echo ">>> rsync -a public/"
 rsync -a "$ROOT/public/" "$PKG_DIR/public/"
 
-# 便于服务器上 cp .env.production.example .env.production（OAuth 等须在生产环境显式配置）
-if [[ -f "$ROOT/.env.production.example" ]]; then
-  echo ">>> copy .env.production.example -> staging"
-  cp "$ROOT/.env.production.example" "$PKG_DIR/.env.production.example"
+# 生产运行时与 server.js 同级读取 .env.production；包内统一为该文件名
+if [[ -f "$ROOT/.env.production" ]]; then
+  echo ">>> copy .env.production -> staging（来自仓库根，注意 tar 分发安全）"
+  cp "$ROOT/.env.production" "$PKG_DIR/.env.production"
+elif [[ -f "$ROOT/.env.production.example" ]]; then
+  echo ">>> copy .env.production.example -> staging/.env.production（模板，部署前请补全密钥）"
+  cp "$ROOT/.env.production.example" "$PKG_DIR/.env.production"
+else
+  echo ">>> WARN: 根目录无 .env.production 也无 .env.production.example，包内未含环境文件"
 fi
 
 # tar 打包时也保留软链（默认行为，不加 -L / --dereference）

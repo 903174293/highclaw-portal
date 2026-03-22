@@ -261,8 +261,8 @@ log "OK: extracted server.js present"
 
 if [[ ! -f "$TARGET_DIR/.env.production" ]]; then
   log "WARN: 未找到 $TARGET_DIR/.env.production"
-  log "      第三方登录等依赖运行时环境变量：请执行 cp $TARGET_DIR/.env.production.example .env.production 并填写后"
-  log "      pm2 restart $PM2_NAME --update-env；或在 Admin → Settings → Auth 开启 Google/GitHub 并保存。"
+  log "      请在目标机仓库根准备 .env.production 后重新 make release 打包，或在服务器手动创建；"
+  log "      第三方登录：填 OAuth 相关变量或 Admin → Settings → Auth；然后 pm2 restart $PM2_NAME --update-env"
 fi
 
 if [[ -n "${SUDO_USER:-}" ]]; then
