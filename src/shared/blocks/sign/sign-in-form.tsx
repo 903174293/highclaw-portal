@@ -13,6 +13,7 @@ import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
 import { useAppContext } from '@/shared/contexts/app';
 
+import { SignMethodDivider } from './sign-method-divider';
 import { SocialProviders } from './social-providers';
 
 export function SignInForm({
@@ -36,6 +37,8 @@ export function SignInForm({
   const isEmailAuthEnabled =
     configs.email_auth_enabled !== 'false' ||
     (!isGoogleAuthEnabled && !isGithubAuthEnabled); // no social providers enabled, auto enable email auth
+
+  const hasSocialLogin = isGoogleAuthEnabled || isGithubAuthEnabled;
 
   if (callbackUrl) {
     if (
@@ -120,6 +123,17 @@ export function SignInForm({
   return (
     <div className={`w-full md:max-w-md ${className}`}>
       <div className="grid gap-4">
+        {hasSocialLogin && (
+          <SocialProviders
+            configs={configs}
+            callbackUrl={callbackUrl || '/'}
+            loading={loading}
+            setLoading={setLoading}
+          />
+        )}
+
+        {hasSocialLogin && isEmailAuthEnabled && <SignMethodDivider />}
+
         {isEmailAuthEnabled && (
           <form
             className="grid gap-4"
@@ -143,13 +157,7 @@ export function SignInForm({
             </div>
 
             <div className="grid gap-2">
-              {/* <div className="flex items-center">
-              <Label htmlFor="password">{t("password_title")}</Label>
-              <Link href="#" className="ml-auto inline-block text-sm underline">
-                Forgot your password?
-              </Link>
-            </div> */}
-
+              <Label htmlFor="password">{t('password_title')}</Label>
               <Input
                 id="password"
                 type="password"
@@ -161,16 +169,6 @@ export function SignInForm({
               />
             </div>
 
-            {/* <div className="flex items-center gap-2">
-            <Checkbox
-              id="remember"
-              onClick={() => {
-                setRememberMe(!rememberMe);
-              }}
-            />
-            <Label htmlFor="remember">{t("remember_me_title")}</Label>
-          </div> */}
-
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? (
                 <Loader2 size={16} className="animate-spin" />
@@ -180,13 +178,6 @@ export function SignInForm({
             </Button>
           </form>
         )}
-
-        <SocialProviders
-          configs={configs}
-          callbackUrl={callbackUrl || '/'}
-          loading={loading}
-          setLoading={setLoading}
-        />
       </div>
       {isEmailAuthEnabled && (
         <div className="flex w-full justify-center border-t py-4">

@@ -3,7 +3,7 @@ import { oneTap } from 'better-auth/plugins';
 import { getLocale } from 'next-intl/server';
 
 import { db } from '@/core/db';
-import { envConfigs } from '@/config';
+import { envConfigs, getTrustedOrigins } from '@/config';
 import * as schema from '@/config/db/schema';
 import { VerifyEmail } from '@/shared/blocks/email/verify-email';
 import {
@@ -29,7 +29,7 @@ const authOptions = {
   appName: envConfigs.app_name,
   baseURL: envConfigs.auth_url,
   secret: envConfigs.auth_secret,
-  trustedOrigins: envConfigs.app_url ? [envConfigs.app_url] : [],
+  trustedOrigins: getTrustedOrigins(),
   user: {
     // Allow persisting custom columns on user table.
     // Without this, better-auth may ignore extra properties during create/update.

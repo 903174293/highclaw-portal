@@ -5,6 +5,30 @@ import packageJson from '../../package.json';
 
 export type ConfigMap = Record<string, string>;
 
+/**
+ * 去掉尾部斜杠，便于与浏览器 Origin 字符串一致（Better Auth trustedOrigins 需精确匹配）
+ */
+function normalizeOriginUrl(raw: string): string {
+  const t = raw.trim();
+  if (!t) return '';
+  return t.replace(/\/+$/, '');
+}
+
+/**
+ * Better Auth 的 trustedOrigins：默认含 NEXT_PUBLIC_APP_URL，另可通过 AUTH_TRUSTED_ORIGINS 追加多个（逗号分隔）。
+ * Sign up 报 Invalid origin 时，检查浏览器地址是否与其中任一条完全一致（含 http/https、www、端口）。
+ */
+export function getTrustedOrigins(): string[] {
+  const primary = normalizeOriginUrl(
+    process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+  );
+  const extra = (process.env.AUTH_TRUSTED_ORIGINS ?? '')
+    .split(',')
+    .map((s) => normalizeOriginUrl(s))
+    .filter(Boolean);
+  return [...new Set([primary, ...extra].filter(Boolean))];
+}
+
 export const envConfigs: ConfigMap = {
   app_url: process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000',
   app_name: process.env.NEXT_PUBLIC_APP_NAME ?? 'HighClaw',
@@ -36,6 +60,12 @@ export const envConfigs: ConfigMap = {
   db_max_connections: process.env.DB_MAX_CONNECTIONS || '1',
   auth_url: process.env.AUTH_URL || process.env.NEXT_PUBLIC_APP_URL || '',
   auth_secret: process.env.AUTH_SECRET ?? '', // openssl rand -base64 32
+  /**
+   * 与后台「认证」设置中的开关同名；写入 env 后会被 getAllConfigs 合并进公开配置，
+   * 登录弹窗 /api/config/get-configs 才能显示 Google、GitHub 按钮（仍需配置 client id/secret 且服务端启用对应 Provider）。
+   */
+  google_auth_enabled: process.env.GOOGLE_AUTH_ENABLED ?? '',
+  github_auth_enabled: process.env.GITHUB_AUTH_ENABLED ?? '',
   version: packageJson.version,
   locale_detect_enabled:
     process.env.NEXT_PUBLIC_LOCALE_DETECT_ENABLED ?? 'false',

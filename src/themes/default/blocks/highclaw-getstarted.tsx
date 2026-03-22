@@ -79,26 +79,32 @@ highclaw agent -m "Hello, HighClaw!"`;
                   {copied ? '✓ Copied' : 'Copy'}
                 </button>
               </div>
-              <pre className="text-sm leading-relaxed whitespace-pre-wrap p-0">
-                <code>
-                  <span className="text-[#6b7280]"># 1. Build</span>
-                  {'\n'}
-                  <span className="text-[#c4b5fd]">$</span>{' '}
-                  <span className="text-[#f8fafc]">git clone https://github.com/903174293/highclaw.git && cd highclaw && make build && make install</span>
-                  {'\n\n'}
-                  <span className="text-[#6b7280]"># 2. Setup</span>
-                  {'\n'}
-                  <span className="text-[#c4b5fd]">$</span>{' '}
-                  <span className="text-[#7dd3fc]">highclaw</span>{' '}
-                  <span className="text-[#86efac]">onboard --interactive</span>
-                  {'\n\n'}
-                  <span className="text-[#6b7280]"># 3. Chat</span>
-                  {'\n'}
-                  <span className="text-[#c4b5fd]">$</span>{' '}
-                  <span className="text-[#7dd3fc]">highclaw</span>{' '}
-                  <span className="text-[#86efac]">agent</span>{' '}
-                  <span className="text-[#f8fafc]">-m</span>{' '}
-                  <span className="text-[#86efac]">&quot;Hello, HighClaw!&quot;</span>
+              <pre className="text-sm leading-relaxed p-0 m-0">
+                <code className="block font-mono">
+                  {/* 每行用 block span，避免 pre/code 内显式换行符文本节点在 SSR 与客户端不一致导致 hydration 失败 */}
+                  <span className="block text-[#6b7280]"># 1. Build</span>
+                  <span className="block">
+                    <span className="text-[#c4b5fd]">$</span>{' '}
+                    <span className="text-[#f8fafc]">
+                      git clone https://github.com/903174293/highclaw.git && cd highclaw && make build && make install
+                    </span>
+                  </span>
+                  <span className="block h-3" aria-hidden />
+                  <span className="block text-[#6b7280]"># 2. Setup</span>
+                  <span className="block">
+                    <span className="text-[#c4b5fd]">$</span>{' '}
+                    <span className="text-[#7dd3fc]">highclaw</span>{' '}
+                    <span className="text-[#86efac]">onboard --interactive</span>
+                  </span>
+                  <span className="block h-3" aria-hidden />
+                  <span className="block text-[#6b7280]"># 3. Chat</span>
+                  <span className="block">
+                    <span className="text-[#c4b5fd]">$</span>{' '}
+                    <span className="text-[#7dd3fc]">highclaw</span>{' '}
+                    <span className="text-[#86efac]">agent</span>{' '}
+                    <span className="text-[#f8fafc]">-m</span>{' '}
+                    <span className="text-[#86efac]">&quot;Hello, HighClaw!&quot;</span>
+                  </span>
                 </code>
               </pre>
             </div>

@@ -21,6 +21,7 @@ import {
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
 
+import { SignMethodDivider } from './sign-method-divider';
 import { SocialProviders } from './social-providers';
 
 export function SignUp({
@@ -45,6 +46,7 @@ export function SignUp({
     configs.email_auth_enabled !== 'false' ||
     (!isGoogleAuthEnabled && !isGithubAuthEnabled); // no social providers enabled, auto enable email auth
   const emailVerificationEnabled = configs.email_verification_enabled === 'true';
+  const hasSocialLogin = isGoogleAuthEnabled || isGithubAuthEnabled;
 
   if (callbackUrl) {
     if (
@@ -166,6 +168,19 @@ export function SignUp({
       </CardHeader>
       <CardContent>
         <div className="grid gap-4">
+          {hasSocialLogin && (
+            <SocialProviders
+              configs={configs}
+              callbackUrl={callbackUrl || '/'}
+              loading={loading}
+              setLoading={setLoading}
+            />
+          )}
+
+          {hasSocialLogin && isEmailAuthEnabled && (
+            <SignMethodDivider labelBgClassName="bg-card" />
+          )}
+
           {isEmailAuthEnabled && (
             <form
               className="grid gap-4"
@@ -228,13 +243,6 @@ export function SignUp({
               </Button>
             </form>
           )}
-
-          <SocialProviders
-            configs={configs}
-            callbackUrl={callbackUrl || '/'}
-            loading={loading}
-            setLoading={setLoading}
-          />
         </div>
       </CardContent>
       {isEmailAuthEnabled && (

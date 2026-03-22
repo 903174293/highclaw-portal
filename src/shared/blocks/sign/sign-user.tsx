@@ -246,7 +246,7 @@ export function SignUser({
       ) : (
         <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
           <Button
-            asChild
+            type="button"
             size={signButtonSize}
             className={cn(
               'border-foreground/10 ml-4 cursor-pointer ring-0',
@@ -254,7 +254,7 @@ export function SignUser({
             )}
             onClick={() => setIsShowSignModal(true)}
           >
-            <span>{t('sign_in_title')}</span>
+            {t('sign_in_title')}
           </Button>
           <SignModal />
         </div>

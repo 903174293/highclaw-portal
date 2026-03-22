@@ -39,29 +39,36 @@ export function SocialProviders({
     }
   }
 
+  /**
+   * 发起 OAuth：成功时通常会整页跳转到 IdP，失败时恢复按钮可点并提示原因。
+   */
   const handleSignIn = async ({ provider }: { provider: string }) => {
-    await signIn.social(
-      {
-        provider: provider,
-        callbackURL: callbackUrl,
-      },
-      {
-        onRequest: (ctx) => {
-          setLoading(true);
+    try {
+      await signIn.social(
+        {
+          provider: provider,
+          callbackURL: callbackUrl,
         },
-        onResponse: (ctx) => {
-          // Do NOT reset loading here; navigation may not have completed yet.
-        },
-        onSuccess: (ctx) => {
-          // Close modal if any; navigation will proceed.
-          setIsShowSignModal(false);
-        },
-        onError: (e: any) => {
-          toast.error(e?.error?.message || 'sign in failed');
-          setLoading(false);
-        },
-      }
-    );
+        {
+          onRequest: () => {
+            setLoading(true);
+          },
+          onResponse: () => {
+            // 跳转进行中，勿在此处 setLoading(false)
+          },
+          onSuccess: () => {
+            setIsShowSignModal(false);
+          },
+          onError: (e: any) => {
+            toast.error(e?.error?.message || e?.message || 'sign in failed');
+            setLoading(false);
+          },
+        }
+      );
+    } catch (e: any) {
+      toast.error(e?.message || 'sign in failed');
+      setLoading(false);
+    }
   };
 
   const providers: ButtonType[] = [];
