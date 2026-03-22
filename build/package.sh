@@ -65,6 +65,12 @@ rsync -a "$ROOT/.next/static/" "$PKG_DIR/.next/static/"
 echo ">>> rsync -a public/"
 rsync -a "$ROOT/public/" "$PKG_DIR/public/"
 
+# 便于服务器上 cp .env.production.example .env.production（OAuth 等须在生产环境显式配置）
+if [[ -f "$ROOT/.env.production.example" ]]; then
+  echo ">>> copy .env.production.example -> staging"
+  cp "$ROOT/.env.production.example" "$PKG_DIR/.env.production.example"
+fi
+
 # tar 打包时也保留软链（默认行为，不加 -L / --dereference）
 echo ">>> tar -> $OUT_TAR"
 rm -f "$OUT_TAR"

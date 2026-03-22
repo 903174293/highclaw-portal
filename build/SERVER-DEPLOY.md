@@ -71,4 +71,5 @@ pm2 save && pm2 startup
 | `Cannot find module` | `make release` 重打 tar（webpack 构建 + `rsync -a` 保留 pnpm 软链） |
 | `curl 127.0.0.1:3000` 拒绝 | 看 `pm2 logs highclaw-portal --err`；确认 `export NODE_ENV/HOSTNAME/PORT` 后 `pm2 start` |
 | `DATABASE_URL is not set` | 在 `.env.production` 配好后 `pm2 restart highclaw-portal --update-env` |
+| 登录没有 Google/GitHub | 解压目录下需有 `.env.production`（可从包内 `.env.production.example` 复制），设 `GOOGLE_AUTH_ENABLED=true` 等并填 `GOOGLE_CLIENT_*` / `GITHUB_CLIENT_*`；**或**在后台 Auth 开启并保存。改完后 `pm2 restart highclaw-portal --update-env` |
 | `duplicate upstream` | 删掉 `sites-enabled` 下重复配置，或 `FORCE_NGINX=1` 重跑 |

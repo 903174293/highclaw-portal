@@ -259,6 +259,12 @@ fi
 log "OK: extracted server.js present"
 # standalone 包已含运行所需 node_modules，不在服务器执行 pnpm/npm install
 
+if [[ ! -f "$TARGET_DIR/.env.production" ]]; then
+  log "WARN: 未找到 $TARGET_DIR/.env.production"
+  log "      第三方登录等依赖运行时环境变量：请执行 cp $TARGET_DIR/.env.production.example .env.production 并填写后"
+  log "      pm2 restart $PM2_NAME --update-env；或在 Admin → Settings → Auth 开启 Google/GitHub 并保存。"
+fi
+
 if [[ -n "${SUDO_USER:-}" ]]; then
   log "chown to $SUDO_USER:$SUDO_USER"
   chown -R "$SUDO_USER:$SUDO_USER" "$TARGET_DIR" || true
