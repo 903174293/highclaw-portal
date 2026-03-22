@@ -122,8 +122,14 @@
         {
           "title": "邮箱",
           "icon": "Mail",
-          "url": "mailto:support@your-domain.com",
+          "url": "mailto:z903174293@gmail.com",
           "target": "_self"
+        },
+        {
+          "title": "X",
+          "icon": "RiTwitterXFill",
+          "url": "https://x.com/W19EcJkZ1Z29433",
+          "target": "_blank"
         }
       ]
     },

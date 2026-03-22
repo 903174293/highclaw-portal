@@ -37,8 +37,8 @@ const contactLinks = [
   {
     icon: IconMail,
     title: 'Email',
-    value: 'contact@highclaw.ai',
-    href: 'mailto:contact@highclaw.ai',
+    value: 'z903174293@gmail.com',
+    href: 'mailto:z903174293@gmail.com',
   },
   {
     icon: IconBrandGithub,
@@ -57,8 +57,8 @@ const contactLinks = [
   {
     icon: IconBrandX,
     title: 'Twitter / X',
-    value: '@highclaw_ai',
-    href: 'https://x.com/highclaw_ai',
+    value: '@W19EcJkZ1Z29433',
+    href: 'https://x.com/W19EcJkZ1Z29433',
     external: true,
   },
 ];
@@ -112,7 +112,7 @@ export function HighclawContact({ section }: { section: Section }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          to: 'contact@highclaw.ai',
+          to: 'z903174293@gmail.com',
           subject: `[Contact Form] ${formState.subject}: ${formState.name}`,
           text: `Name: ${formState.name}\nEmail: ${formState.email}\nSubject: ${formState.subject}\n\nMessage:\n${formState.message}`,
         }),

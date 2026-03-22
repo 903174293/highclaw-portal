@@ -137,8 +137,14 @@
         {
           "title": "Email",
           "icon": "Mail",
-          "url": "mailto:contact@highclaw.ai",
+          "url": "mailto:z903174293@gmail.com",
           "target": "_self"
+        },
+        {
+          "title": "X",
+          "icon": "RiTwitterXFill",
+          "url": "https://x.com/W19EcJkZ1Z29433",
+          "target": "_blank"
         }
       ]
     },
