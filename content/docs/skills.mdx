@@ -1,0 +1,48 @@
+---
+title: Skills
+description: SKILL.md-driven skills, open-skills sync, and custom packs.
+---
+
+Pure Go **SKILL.md** workflow — no Node/npm for the skill runtime.
+
+![Skill architecture](https://raw.githubusercontent.com/903174293/highclaw/main/images/skill-architecture.svg)
+
+## Flow
+
+On each turn, active skills are loaded and merged into the system prompt.
+
+## Layout
+
+```
+~/open-skills/skills/     # community (auto-sync)
+<workspace>/skills/       # your skills
+  my-skill/SKILL.md
+```
+
+## CLI
+
+```bash
+highclaw skills list
+highclaw skills status
+highclaw skills install https://github.com/user/repo
+highclaw skills install /path/to/skill
+highclaw skills uninstall my-skill
+```
+
+## Custom skill
+
+```bash
+mkdir -p ~/.highclaw/workspace/skills/my-skill
+# edit SKILL.md — title, instructions, behavior
+highclaw skills list
+```
+
+## Open-skills repo
+
+- Path: `~/open-skills/`  
+- Auto `git pull` on interval; first run `git clone --depth 1`  
+- Disable: `export HIGHCLAW_OPEN_SKILLS_ENABLED=false`
+
+## Onboard
+
+Interactive onboard includes a skills step (view / install).

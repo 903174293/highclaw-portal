@@ -1,0 +1,64 @@
+---
+title: Memory system
+description: SQLite-native hybrid search, embeddings, and hygiene — no mandatory external vector DB.
+---
+
+HighClaw implements memory **in Go** with **no required** Pinecone, Elasticsearch, LangChain stack, or Redis for core operations. One SQLite file can power keyword + vector hybrid search.
+
+## Engine
+
+Uses **modernc.org/sqlite** (pure Go, no CGO) for in-process queries — fast cross-compile and low latency vs spawning `sqlite3` CLI.
+
+| Approach | Typical latency | Notes |
+| --- | --- | --- |
+| Old `os/exec` sqlite3 CLI | ~5–15 ms | Fork per query |
+| **modernc.org/sqlite (current)** | **~20–250 µs** | Pure Go |
+| CGO mattn/sqlite3 | ~10–100 µs | Needs C toolchain |
+
+## Capabilities (summary)
+
+| Layer | What it does |
+| --- | --- |
+| Hybrid search | FTS5 BM25 + vector cosine, weighted merge |
+| FTS5 `content=` | Triggers keep index in sync, no duplicate bodies |
+| BM25 normalization | Scores in \[0,1\] for stable ranking |
+| CJK fallback | FTS5 → LIKE when needed |
+| Vectors | Embeddings as BLOB, cosine in-process |
+| Embedding provider | OpenAI-compatible or `noop` |
+| Batch embed | `embedBatch()` — large batches for reindex |
+| LRU cache | `embedding_cache` table |
+| Chunking | Heading-aware Markdown splitter |
+| Hygiene | Archive, purge, retention, throttles |
+| Session tags | `session_key`, `channel`, `sender` on entries |
+| CLI | `memory search|get|list|status|sync|reset` |
+
+## Example configuration
+
+```yaml
+memory:
+  backend: "sqlite"
+  autoSave: true
+  hygieneEnabled: true
+  archiveAfterDays: 7
+  purgeAfterDays: 30
+  conversationRetentionDays: 30
+  embeddingProvider: "openai"
+  embeddingModel: "text-embedding-3-small"
+  embeddingDimensions: 1536
+  vectorWeight: 0.7
+  keywordWeight: 0.3
+  embeddingCacheSize: 10000
+  chunkMaxTokens: 512
+```
+
+## CLI examples
+
+```bash
+highclaw memory search "architecture"
+highclaw memory get user_msg_abc123
+highclaw memory list --category conversation --limit 10
+highclaw memory status
+highclaw memory sync
+```
+
+For deep comparisons with other frameworks, see the upstream [README](https://github.com/903174293/highclaw/blob/main/README.md) memory section.

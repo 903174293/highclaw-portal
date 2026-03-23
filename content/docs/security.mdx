@@ -1,0 +1,57 @@
+---
+title: Security
+description: Gateway exposure, pairing, workspace scope, and allowlists.
+---
+
+## Checklist (summary)
+
+| # | Item | How |
+| --- | --- | --- |
+| 1 | Gateway not public by default | Binds `127.0.0.1`; `0.0.0.0` blocked without tunnel or explicit allow |
+| 2 | Pairing | 6-digit code; `POST /pair` → bearer token; `/webhook` requires `Authorization` |
+| 3 | Filesystem scope | `workspace_only` default; blocked paths; symlink escape checks |
+| 4 | Tunnel | Public bind requires active tunnel (Tailscale, Cloudflare, ngrok, custom) |
+
+## Sandbox (`workspaceOnly`)
+
+Default: operations stay under the workspace (`~/.highclaw/workspace`).
+
+```bash
+highclaw config get autonomy.workspaceOnly
+highclaw config set autonomy.workspaceOnly false   # allow absolute paths (use with care)
+highclaw agent -m "..." --no-sandbox              # one-shot override
+```
+
+```yaml
+autonomy:
+  level: supervised
+  workspaceOnly: true
+  allowedCommands: [git, go, make, ls, cat, grep]
+  forbiddenPaths: [/etc, /root]
+```
+
+**Risky shell commands:** model may need to pass `"approved": true` in tool calls (self-approval pattern, same idea as ZeroClaw).
+
+## Channel allowlists
+
+- **Empty allowlist** → deny inbound
+- **`"*"`** → allow all (explicit)
+- Otherwise → exact match list
+
+Recommended: list your own Telegram username / numeric ID, Discord user id, Slack member id; use `"*"` only for short tests.
+
+Repair flow:
+
+```bash
+highclaw onboard --channels-only
+```
+
+## WhatsApp (outline)
+
+1. Meta Business app + WhatsApp product  
+2. Access token, phone number id, verify token  
+3. Configure `channels_config.whatsapp` in `config.yaml`  
+4. Run gateway behind **HTTPS** tunnel  
+5. Set Meta webhook to `https://<tunnel>/whatsapp`
+
+See upstream README for full YAML snippet.

@@ -1,0 +1,14 @@
+---
+title: Gateway API
+description: Health, pairing, webhook, and WhatsApp verification endpoints.
+---
+
+| Endpoint | Method | Auth | Description |
+| --- | --- | --- | --- |
+| `/health` | GET | — | Health check |
+| `/pair` | POST | `X-Pairing-Code` | Exchange code for bearer token |
+| `/webhook` | POST | `Authorization: Bearer` | Send `{"message": "..."}` |
+| `/whatsapp` | GET | Query params | Meta verification (`hub.*`) |
+| `/whatsapp` | POST | Meta signature | Inbound WhatsApp events |
+
+Always use **HTTPS** in production; bind locally and expose via tunnel when needed.

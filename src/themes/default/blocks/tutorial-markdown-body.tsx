@@ -8,12 +8,12 @@ import remarkGfm from 'remark-gfm';
 import { extractMarkdownToc } from '@/shared/lib/markdown-toc';
 
 interface TutorialMarkdownBodyProps {
-  /** Markdown 正文 */
   markdown: string;
 }
 
 /**
- * 渲染教程 Markdown，并为 h1–h3 注入与 extractMarkdownToc 一致的 id，便于右侧目录锚点跳转。
+ * 渲染教程 Markdown，为 h1–h3 注入 id 便于目录锚点跳转。
+ * 排版完全依赖外层 `prose` 类（fumadocs style.css），不再叠额外样式。
  */
 export function TutorialMarkdownBody({ markdown }: TutorialMarkdownBodyProps) {
   const toc = useMemo(() => extractMarkdownToc(markdown), [markdown]);
@@ -51,10 +51,8 @@ export function TutorialMarkdownBody({ markdown }: TutorialMarkdownBodyProps) {
   };
 
   return (
-    <div className="prose prose-invert prose-lg max-w-none dark:prose-invert [&_pre]:rounded-lg [&_pre]:bg-[#0f172a] [&_pre]:p-4 [&_code]:text-sm [&_a]:text-[#3b82f6]">
-      <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
-        {markdown}
-      </ReactMarkdown>
-    </div>
+    <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
+      {markdown}
+    </ReactMarkdown>
   );
 }

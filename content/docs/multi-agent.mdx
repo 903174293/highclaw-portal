@@ -1,0 +1,25 @@
+---
+title: Multi-agent
+description: Registry, routing, sub-agents, and group strategies.
+---
+
+HighClaw supports a **multi-agent runtime** with agent-to-agent communication, delegation, and routing.
+
+## Highlights
+
+- **Agent registry** — Multiple agents with own models, prompts, tools, workspaces.
+- **Message routing** — Priority routing by channel, account, peer, guild, role.
+- **Sub-agent spawn** — `agent_spawn` tool with concurrency control.
+- **Announce queue** — Modes: `direct`, `followup`, `collect`, `steer`, `steer-backlog`, `interrupt`.
+- **Group strategies** — Mentions, broadcast, per-sender tool permissions, gating.
+- **Session isolation** — Per-agent session keys and workspace dirs.
+- **Stats** — Token usage, cost, duration per sub-agent task.
+
+## Further reading
+
+In the upstream repo, see:
+
+- `docs/multi-agent-guide.md`
+- `docs/heartbeat-guide.md`
+
+![Architecture](https://raw.githubusercontent.com/903174293/highclaw/main/images/architecture.svg)

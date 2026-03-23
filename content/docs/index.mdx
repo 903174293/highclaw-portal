@@ -1,7 +1,85 @@
 ---
 title: Introduction
+description: High performance AI agent infrastructure — 100% Go, single binary, multi-channel.
 ---
 
-## What is YourAppName?
+![HighClaw](/highclaw.png)
 
-YourAppName is an AI SaaS development framework based on NextJS, with built-in rich components and AI SDKs to help you quickly complete AI SaaS project development.
+**HighClaw** is a fast, small, fully autonomous AI assistant infrastructure: deploy anywhere, swap anything.
+
+> **High performance · Built for speed and reliability · 100% Go · Provider-agnostic**
+
+```
+Go binary · modular traits · 22+ providers · pluggable channels / tools / memory · production-ready gateway
+```
+
+## Features
+
+- **High performance** — Optimized Go runtime, low-overhead startup, stable long-running execution.
+- **Low deployment cost** — Single binary for edge, VM, and cloud.
+- **Fast ops** — No Node/Python bootstrap; install and start in minutes.
+- **Reliable defaults** — Gateway auth, memory persistence, channel safety.
+- **Portable** — macOS / Linux / Windows, amd64 & arm64.
+
+## Multi-channel gateway
+
+One binary connects to many messaging platforms with rich text, images, and interactive responses.
+
+![Channels overview](https://raw.githubusercontent.com/903174293/highclaw/main/images/channels-overview.svg)
+
+| Platform | Protocol | Rich text | Images | Status |
+| --- | --- | --- | --- | --- |
+| Telegram | Bot API (polling) | Markdown | Yes | Production |
+| Discord | Gateway WebSocket | Markdown | Yes | Production |
+| Slack | Events API | mrkdwn | Yes | Production |
+| WhatsApp | Cloud API (webhook) | Plain | Yes | Production |
+| Feishu / Lark | WebSocket | Rich text | Yes | Production |
+| WeCom | Callback API | Markdown | Yes | Production |
+| WeChat | MP API | Plain | Yes | Beta |
+| iMessage | AppleScript bridge | Plain | No | Beta |
+| Matrix | Client-Server API | HTML | Yes | Beta |
+| Webhook | HTTP POST | JSON | Yes | Production |
+| IRC | IRC protocol | Plain | No | Beta |
+| Signal | signal-cli bridge | Plain | Yes | Planned |
+
+**Highlights:** hot-reload channels · per-sender sessions · bind authentication · unified AI API across channels.
+
+## Why teams pick HighClaw
+
+- **Lean** — Small binary, fast startup, low memory.
+- **Gateway optional** — CLI/TUI works without a server; start the gateway only when you need channels or HTTP API.
+- **Secure by design** — Pairing, sandboxing, allowlists, workspace scoping.
+- **Swappable** — Providers, channels, tools, memory, tunnels are traits.
+- **No lock-in** — OpenAI-compatible providers and custom endpoints.
+
+## Dual-mode architecture
+
+The **agent core** and **gateway** are separate: the agent can run with **no HTTP server** and **no open port**.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    HighClaw Dual-Mode                        │
+├──────────────────────────┬──────────────────────────────────┤
+│   CLI / TUI              │   Gateway                         │
+│   (no server)            │   (service process)               │
+├──────────────────────────┼──────────────────────────────────┤
+│ highclaw agent -m "..."  │ highclaw gateway                  │
+│ highclaw tui             │ Feishu / Telegram / Discord       │
+│ highclaw memory search   │ HTTP API / WebSocket              │
+│ highclaw sessions list   │ Pairing · hot-reload · routing    │
+├──────────────────────────┼──────────────────────────────────┤
+│ Direct LLM · local memory│ Webhooks · bearer auth · multi-user│
+└──────────────────────────┴──────────────────────────────────┘
+```
+
+**CLI mode** — Loads config, calls the LLM, exits (or TUI). No daemon.
+
+**Gateway mode** — HTTP/WebSocket for channels, REST API, pairing, rate limits, routing.
+
+If you only use the terminal, you never need `highclaw gateway`.
+
+## Next steps
+
+- [Compare with OpenClaw](/docs/comparison)
+- [Quick start](/docs/quick-start)
+- [Session management](/docs/sessions)

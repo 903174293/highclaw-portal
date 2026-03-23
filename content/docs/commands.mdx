@@ -1,0 +1,111 @@
+---
+title: Commands (1/2)
+description: Setup, agent, gateway, channels, sessions, memory, models, diagnostics.
+---
+
+Pattern: `highclaw <command> [subcommand] [flags]`. Full list: 60+ commands — this page covers the most common; [part 2](/docs/commands-advanced) covers ops, cron, plugins, migration, etc.
+
+## Setup & onboarding
+
+| Command | Description |
+| --- | --- |
+| `highclaw onboard --api-key … --provider …` | Non-interactive setup |
+| `highclaw onboard --interactive` | Full wizard |
+| `highclaw onboard --channels-only` | Channels + allowlists only |
+| `highclaw config show` | Print config |
+| `highclaw config get <key>` | One value |
+| `highclaw config set <key> <value>` | Set value |
+| `highclaw config validate` | Validate file |
+
+## Agent & chat
+
+| Command | Description |
+| --- | --- |
+| `highclaw agent` | Interactive chat |
+| `highclaw agent -m "…"` | One shot |
+| `highclaw agent -m "…" --session <key>` | Use session |
+| `highclaw agent -l` | Continue latest session |
+| `highclaw agent rpc` | JSON stdin/stdout RPC |
+| `highclaw message "…"` | Shortcut one-shot |
+| `highclaw tui` | Terminal UI |
+
+## Gateway & daemon
+
+| Command | Description |
+| --- | --- |
+| `highclaw gateway` | HTTP + WebSocket gateway |
+| `highclaw gateway --port <n>` | Custom port |
+| `highclaw gateway --port 0` | Random port |
+| `highclaw daemon` | Autonomous runtime |
+| `highclaw daemon install\|start\|stop\|status\|uninstall` | Service lifecycle |
+| `highclaw service …` | Alias of `daemon` |
+
+## Channels
+
+| Command | Description |
+| --- | --- |
+| `highclaw channels status` | All channels |
+| `highclaw channels doctor` | Health checks |
+| `highclaw channels login <name>` | e.g. WhatsApp QR |
+| `highclaw channels logout <name>` | Logout |
+| `highclaw channels send <ch> <to> <text>` | Send via channel |
+| `highclaw integrations info <Name>` | Setup hints |
+
+## Sessions
+
+| Command | Description |
+| --- | --- |
+| `highclaw sessions list` | List sessions |
+| `highclaw sessions current` | Active session |
+| `highclaw sessions get <key>` | Details |
+| `highclaw sessions switch <key>` | Switch |
+| `highclaw sessions reset\|delete <key>` | Reset / delete |
+| `highclaw sessions bind\|unbind\|bindings` | Channel bindings |
+| `highclaw sessions prune` | Cleanup stale |
+
+## Memory
+
+| Command | Description |
+| --- | --- |
+| `highclaw memory status` | Backend health |
+| `highclaw memory list` | Paginated list + filters |
+| `highclaw memory get <key>` | One entry |
+| `highclaw memory search <q>` | Hybrid search |
+| `highclaw memory sync` | Rebuild index / embeddings |
+| `highclaw memory reset` | Reset index |
+
+## Skills
+
+| Command | Description |
+| --- | --- |
+| `highclaw skills list` | Installed skills |
+| `highclaw skills install <url\|path>` | Install |
+| `highclaw skills uninstall <name>` | Remove |
+| `highclaw skills status` | Summary |
+
+## Models
+
+| Command | Description |
+| --- | --- |
+| `highclaw models list` | Available models |
+| `highclaw models scan` | Discover from providers |
+| `highclaw models set <model>` | Default model |
+
+## Diagnostics
+
+| Command | Description |
+| --- | --- |
+| `highclaw status` | Overall status |
+| `highclaw doctor` | Full diagnostics |
+| `highclaw dns` | DNS checks |
+| `highclaw logs tail\|query\|list\|status\|clean` | Log utilities |
+
+## Security
+
+| Command | Description |
+| --- | --- |
+| `highclaw security audit` | Audit config + channels |
+| `highclaw security fix` | Auto-fix |
+| `highclaw exec-approvals list\|approve\|deny` | Approvals |
+
+Continue: [Commands (2/2)](/docs/commands-advanced).

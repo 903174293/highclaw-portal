@@ -1,0 +1,37 @@
+---
+title: Identity
+description: OpenClaw markdown files or AIEOS JSON personas.
+---
+
+## OpenClaw (default)
+
+Markdown in workspace:
+
+- `IDENTITY.md` — who the agent is  
+- `SOUL.md` — personality  
+- `USER.md` — who you are  
+- `AGENTS.md` — behavior guidelines  
+
+## AIEOS
+
+Portable JSON identity ([aieos.org](https://aieos.org)):
+
+```yaml
+identity:
+  format: "aieos"
+  aieos_path: "identity.json"
+```
+
+Or inline JSON under `aieos_inline` (see upstream README for full example).
+
+### Schema sections (overview)
+
+| Section | Content |
+| --- | --- |
+| identity | Names, bio, origin |
+| psychology | Cognitive weights, MBTI, moral compass |
+| linguistics | Style, formality, catchphrases |
+| motivations | Goals, fears |
+| capabilities | Skills / tools |
+| physicality | Image-generation hints |
+| interests | Hobbies, lifestyle |

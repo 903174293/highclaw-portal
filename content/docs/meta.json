@@ -1,0 +1,27 @@
+{
+  "title": "HighClaw",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "---Overview---",
+    "comparison",
+    "quick-start",
+    "---Guide---",
+    "sessions",
+    "deployment",
+    "multi-agent",
+    "architecture",
+    "memory",
+    "---Operations---",
+    "security",
+    "configuration",
+    "identity",
+    "gateway-api",
+    "---Reference---",
+    "commands",
+    "commands-advanced",
+    "skills",
+    "development",
+    "community"
+  ]
+}

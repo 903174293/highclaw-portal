@@ -12,11 +12,16 @@ export type NewTutorialDoc = typeof tutorialDoc.$inferInsert;
  */
 export async function listTutorialDocs(locale: string): Promise<TutorialDocRow[]> {
   if (!process.env.DATABASE_URL) return [];
-  return db()
-    .select()
-    .from(tutorialDoc)
-    .where(eq(tutorialDoc.locale, locale))
-    .orderBy(asc(tutorialDoc.sortOrder), asc(tutorialDoc.slugPath));
+  try {
+    return await db()
+      .select()
+      .from(tutorialDoc)
+      .where(eq(tutorialDoc.locale, locale))
+      .orderBy(asc(tutorialDoc.sortOrder), asc(tutorialDoc.slugPath));
+  } catch (e) {
+    console.error('[tutorial] listTutorialDocs failed', e);
+    return [];
+  }
 }
 
 /**
@@ -27,30 +32,45 @@ export async function getTutorialByPath(
   slugPath: string
 ): Promise<TutorialDocRow | null> {
   if (!process.env.DATABASE_URL) return null;
-  const [row] = await db()
-    .select()
-    .from(tutorialDoc)
-    .where(
-      and(eq(tutorialDoc.locale, locale), eq(tutorialDoc.slugPath, slugPath))
-    );
-  return row ?? null;
+  try {
+    const [row] = await db()
+      .select()
+      .from(tutorialDoc)
+      .where(
+        and(eq(tutorialDoc.locale, locale), eq(tutorialDoc.slugPath, slugPath))
+      );
+    return row ?? null;
+  } catch (e) {
+    console.error('[tutorial] getTutorialByPath failed', e);
+    return null;
+  }
 }
 
 export async function getTutorialById(id: string): Promise<TutorialDocRow | null> {
   if (!process.env.DATABASE_URL) return null;
-  const [row] = await db()
-    .select()
-    .from(tutorialDoc)
-    .where(eq(tutorialDoc.id, id));
-  return row ?? null;
+  try {
+    const [row] = await db()
+      .select()
+      .from(tutorialDoc)
+      .where(eq(tutorialDoc.id, id));
+    return row ?? null;
+  } catch (e) {
+    console.error('[tutorial] getTutorialById failed', e);
+    return null;
+  }
 }
 
 export async function listAllTutorialDocs(): Promise<TutorialDocRow[]> {
   if (!process.env.DATABASE_URL) return [];
-  return db()
-    .select()
-    .from(tutorialDoc)
-    .orderBy(asc(tutorialDoc.locale), asc(tutorialDoc.sortOrder), asc(tutorialDoc.slugPath));
+  try {
+    return await db()
+      .select()
+      .from(tutorialDoc)
+      .orderBy(asc(tutorialDoc.locale), asc(tutorialDoc.sortOrder), asc(tutorialDoc.slugPath));
+  } catch (e) {
+    console.error('[tutorial] listAllTutorialDocs failed', e);
+    return [];
+  }
 }
 
 /**

@@ -1,0 +1,51 @@
+---
+title: Development
+description: Build, test, cross-compile, and release from source.
+---
+
+All build entry points go through **Make**. See upstream `docs/build-guide.md` for details.
+
+```bash
+make build               # release, current platform → dist/highclaw
+make build-dev           # debug symbols
+make build-linux         # Linux amd64 from macOS
+make build-linux-arm64   # Linux arm64
+make build-all           # six platforms
+make test                # tests (race)
+make fmt                 # format
+make lint                # golangci-lint
+make release             # package tar/zip → dist/release/
+```
+
+**Note:** `make build` targets **current OS/arch** only. For Linux servers from macOS, use `make build-linux` or `make deploy`.
+
+## Deploy helper
+
+```bash
+make deploy DEPLOY_HOST=root@server
+make deploy DEPLOY_HOST=root@server DEPLOY_ARCH=arm64
+make deploy DEPLOY_HOST=root@server DEPLOY_PATH=/opt/highclaw
+```
+
+## Install locally
+
+```bash
+make install    # GOBIN > GOPATH/bin > ~/go/bin
+make uninstall
+```
+
+## Quality
+
+```bash
+make fmt
+make vet
+make lint
+make doctor
+```
+
+## Git hooks
+
+```bash
+git config core.hooksPath .githooks
+# skip: git push --no-verify
+```

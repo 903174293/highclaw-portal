@@ -3,6 +3,20 @@
  */
 export type TocItem = { level: number; text: string; id: string };
 
+/** fumadocs-ui DocsPage 右侧目录项格式 */
+export type FumadocsTocItem = { url: string; title: string; depth: number };
+
+/**
+ * 将 Markdown 目录项转为 fumadocs TOC（用于 DocsPage 的 toc 属性）。
+ */
+export function toFumadocsToc(items: TocItem[]): FumadocsTocItem[] {
+  return items.map((item) => ({
+    url: `#${item.id}`,
+    title: item.text,
+    depth: item.level,
+  }));
+}
+
 function slugify(text: string): string {
   return text
     .toLowerCase()

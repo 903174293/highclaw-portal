@@ -32,8 +32,8 @@ export default async function TutorialDynamicPage({
     }
     return (
       <div className="py-4">
-        <h1 className="text-2xl font-bold text-[#f8fafc] mb-2">Tutorials</h1>
-        <p className="text-[#94a3b8]">
+        <h1 className="text-2xl font-semibold text-fd-foreground mb-2">Tutorials</h1>
+        <p className="text-fd-muted-foreground text-sm leading-relaxed">
           No tutorials published yet. Add Markdown documents in Admin → Tutorials.
         </p>
       </div>

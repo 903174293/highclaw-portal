@@ -1,0 +1,36 @@
+---
+title: Architecture
+description: Trait-based subsystems — swap via config, not code forks.
+---
+
+Every major subsystem is a **trait** — change implementation in `config.yaml` without rewriting core code.
+
+## Subsystems
+
+| Subsystem | Trait | Ships with | Extend |
+| --- | --- | --- | --- |
+| AI models | `Provider` | 22+ providers (OpenRouter, Anthropic, OpenAI, Ollama, …) | OpenAI-compatible `custom:` URL |
+| Channels | `Channel` | CLI, Telegram, Discord, Slack, WhatsApp, Feishu, … | Any messaging API |
+| Memory | `Memory` | SQLite hybrid (FTS5 + vector), Markdown | Custom backends |
+| Tools | `Tool` | shell, files, memory, browser (allowlist), composio | Custom tools |
+| Observability | `Observer` | Noop, Log, Multi | Prometheus, OTel |
+| Runtime | `RuntimeAdapter` | Native, Docker | WASM planned |
+| Security | `SecurityPolicy` | Pairing, sandbox, allowlists, rate limits | — |
+| Identity | `IdentityConfig` | OpenClaw markdown, AIEOS JSON | Custom formats |
+| Tunnel | `Tunnel` | Cloudflare, Tailscale, ngrok, custom | Any tunnel binary |
+| Heartbeat | Engine | `HEARTBEAT.md` tasks | — |
+| Skills | Loader | TOML + `SKILL.md` | Community packs |
+| Integrations | Registry | 50+ integrations | Plugins |
+
+## Runtime kinds
+
+- **Supported today:** `native`, `docker`
+- **Planned:** WASM / edge — unsupported kinds **fail fast** with a clear error (no silent fallback).
+
+## Memory (overview)
+
+HighClaw ships a **full in-process memory stack** on SQLite: hybrid keyword + vector search, no mandatory external vector DB.
+
+![Memory architecture](https://raw.githubusercontent.com/903174293/highclaw/main/images/memory-architecture.svg)
+
+Details: [Memory](/docs/memory).

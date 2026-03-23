@@ -1,0 +1,110 @@
+---
+title: Session management
+description: Unified sessions for CLI, TUI, and channels.
+---
+
+HighClaw uses a **unified local session store** (`~/.highclaw/sessions`) shared by CLI, TUI, and all channels.
+
+## Capabilities
+
+| Feature | Description |
+| --- | --- |
+| Auto-create | Each `highclaw agent -m "..."` can create a new session |
+| Multi-turn resume | `--session <key>` resumes with full history |
+| TUI | Sidebar lists CLI + TUI sessions |
+| Persistence | JSON files under `~/.highclaw/sessions/` |
+| Cleanup | `sessions prune` (default ~30 days, max count) |
+| Channel binding | External channels bind via routing |
+| Memory tags | Entries include `session_key` |
+
+## Session key format
+
+```
+agent:{agentId}:{sessionName}
+```
+
+Examples:
+
+- `agent:main:cli-1234567890` — CLI one-shot
+- `agent:main:session-42601` — TUI session
+- `agent:main:main` — Default for external channels
+
+## CLI cheat sheet
+
+```bash
+highclaw agent -m "Hello!"
+highclaw agent -m "Continue" --session agent:main:cli-1234567890
+
+highclaw sessions list
+highclaw sessions get <key>
+highclaw sessions current
+highclaw sessions switch <key>
+highclaw sessions reset <key>
+highclaw sessions delete <key>
+highclaw sessions prune
+highclaw sessions prune --max-age 7
+highclaw sessions prune --max-count 100
+
+highclaw sessions bindings
+highclaw sessions bind <ch> <conv> <key>
+highclaw sessions unbind <ch> <conv>
+```
+
+## DM scope (routing)
+
+| `dmScope` | Session key pattern | Use case |
+| --- | --- | --- |
+| `main` | `agent:main:main` | All DMs share one session |
+| `per-peer` | `agent:main:direct:<peerId>` | Per user, merged across channels |
+| `per-channel-peer` | `agent:main:<channel>:direct:<peerId>` | **Recommended** — per user/channel |
+| `per-account-channel-peer` | `agent:main:<channel>:<accountId>:direct:<peerId>` | Multi-bot isolation |
+
+**Groups** route by group id: `agent:main:<channel>:<peerKind>:<groupId>`.
+
+### Config snippet (`~/.highclaw/config.yaml`)
+
+```yaml
+session:
+  scope: per-sender
+  dmScope: per-channel-peer
+  mainKey: main
+  identityLinks:
+    alice:
+      - telegram:alice_tg
+      - whatsapp:+1234567890
+```
+
+## TUI keys
+
+| Key | Action |
+| --- | --- |
+| Tab | Focus sidebar / input |
+| ↑ / ↓ | Navigate sessions |
+| Enter | Send / open session |
+| Ctrl+N | New session |
+| Ctrl+L | Clear view |
+| Ctrl+R | Reload list |
+| Ctrl+C | Quit |
+
+## Slash commands (channels / TUI)
+
+| Command | Description |
+| --- | --- |
+| `/new`, `/reset` | Fresh session |
+| `/session <key>` | Switch session |
+| `/sessions` | List sessions |
+| `/agent <id>` | Switch agent |
+| `/model [provider/model]` | View/override model |
+| `/think [level]` | Thinking level |
+| `/help`, `/commands` | Help |
+
+## Quick verification
+
+```bash
+highclaw agent -m "first"
+highclaw agent -m "second"
+highclaw sessions list
+highclaw tui
+```
+
+You should see multiple sessions in the TUI sidebar.

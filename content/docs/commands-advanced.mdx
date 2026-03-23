@@ -1,0 +1,93 @@
+---
+title: Commands (2/2)
+description: Browser, cron, hooks, devices, plugins, migration, tasks, agents, subagents, heartbeat, lifecycle.
+---
+
+Part 1: [Commands (1/2)](/docs/commands).
+
+## Browser
+
+| Command | Description |
+| --- | --- |
+| `highclaw browser open <url>` | Open URL (controlled browser) |
+| `highclaw browser inspect` | Inspect state |
+
+## Cron (gateway must run)
+
+| Command | Description |
+| --- | --- |
+| `highclaw cron list` | Scheduled tasks |
+| `highclaw cron add\|edit\|delete` | Manage tasks |
+| `highclaw cron enable\|disable <id>` | Toggle |
+| `highclaw cron status` | Scheduler status |
+| `highclaw cron runs <id>` | History |
+| `highclaw cron trigger <id>` | Manual run |
+
+`main` agent can manage all jobs; sub-agents only their own.
+
+## Hooks & webhooks
+
+| Command | Description |
+| --- | --- |
+| `highclaw hooks list\|install\|status` | Hooks |
+| `highclaw webhooks` | Inbound/outbound webhooks |
+
+## Devices & pairing
+
+| Command | Description |
+| --- | --- |
+| `highclaw devices list` | Paired devices |
+| `highclaw nodes list` | Connected nodes |
+| `highclaw pairing` | Pairing UI / tokens |
+
+## Plugins
+
+| Command | Description |
+| --- | --- |
+| `highclaw plugins list\|install\|sync` | Plugins |
+
+## Migration
+
+| Command | Description |
+| --- | --- |
+| `highclaw migrate openclaw` | From `~/.openclaw` |
+| `highclaw migrate openclaw --dry-run` | Preview |
+
+## Tasks (audit log)
+
+| Command | Description |
+| --- | --- |
+| `highclaw tasks list\|get\|search\|stats\|count\|clean` | Task records |
+
+## Multi-agent team
+
+| Command | Description |
+| --- | --- |
+| `highclaw agents list\|add\|delete\|show` | Agents |
+| `highclaw agents set-identity\|persona\|set-skills\|setup-skills` | Identity & skills |
+| `highclaw agents edit-file` | Workspace files |
+
+## Subagents
+
+| Command | Description |
+| --- | --- |
+| `highclaw subagents list\|stop\|info\|log\|send` | Sub-task runs |
+| `highclaw subagents --port 18790` | Gateway port |
+
+## Heartbeat
+
+| Command | Description |
+| --- | --- |
+| `highclaw system heartbeat status\|enable\|disable\|now\|last` | Heartbeat |
+| `highclaw system heartbeat setup` | Wizard |
+
+## Lifecycle
+
+| Command | Description |
+| --- | --- |
+| `highclaw update check\|install` | Updates |
+| `highclaw reset --yes` | Reset state (keeps config by default) |
+| `highclaw uninstall --yes` | Remove install + data |
+| `highclaw version` | Version |
+| `highclaw docs` | Open docs |
+| `highclaw completion bash\|zsh\|fish\|powershell` | Shell completion |

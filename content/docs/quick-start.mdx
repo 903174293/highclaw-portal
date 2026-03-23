@@ -1,0 +1,111 @@
+---
+title: Quick start
+description: Use pre-built packages from the site, or build from source — then onboard and run the CLI.
+---
+
+## Option A: Pre-built package (fastest)
+
+Official builds are **self-contained native binaries** — no Go toolchain, no `make`, same CLI as a source build. Extract and run.
+
+1. Open **[Download](/download)** on this site (sign in if prompted).
+2. Pick the archive that matches your OS and CPU (filenames contain `darwin-arm64`, `darwin-amd64`, `linux-arm64`, `linux-amd64`, `windows-amd64`, etc.).
+3. Extract and put the binary on your `PATH`, or invoke it by full path.
+
+### macOS (Apple Silicon / Intel)
+
+```bash
+tar -xzf highclaw-*-darwin-arm64.tar.gz   # or *-darwin-amd64.tar.gz
+cd <extracted-folder>                      # layout may be flat or one top-level dir
+chmod +x highclaw                          # if needed
+./highclaw version
+# Optional: move to a directory on PATH, e.g. /usr/local/bin
+```
+
+On Apple Silicon, if macOS blocks the binary the first time: **System Settings → Privacy & Security** → allow, or clear quarantine:
+
+```bash
+xattr -dr com.apple.quarantine ./highclaw
+```
+
+### Linux (amd64 / arm64)
+
+```bash
+tar -xzf highclaw-*-linux-amd64.tar.gz     # or *-linux-arm64.tar.gz
+cd <extracted-folder>
+chmod +x highclaw
+./highclaw version
+# Optional: sudo mv highclaw /usr/local/bin/
+```
+
+### Windows (amd64 / arm64)
+
+Extract the `.tar.gz` (7-Zip, WinTar, or WSL). Run:
+
+```powershell
+.\highclaw.exe version
+```
+
+Use **PowerShell** or **cmd** from the folder that contains `highclaw.exe`, or add that folder to `PATH`.
+
+---
+
+## Option B: Build from source
+
+Use this when you need a custom build or are developing HighClaw itself.
+
+```bash
+git clone https://github.com/903174293/highclaw.git
+cd highclaw
+make build
+make install
+```
+
+**Without global install:** after `make build`, use `./dist/highclaw` (e.g. `./dist/highclaw status`).
+
+---
+
+## Configure and run (same for package or source)
+
+After the `highclaw` / `highclaw.exe` binary works:
+
+```bash
+# Quick setup (no prompts)
+highclaw onboard --api-key sk-... --provider openrouter
+
+# Or interactive wizard
+highclaw onboard --interactive
+
+# Or repair channels / allowlists only
+highclaw onboard --channels-only
+
+# Chat
+highclaw agent -m "Hello, HighClaw!"
+highclaw agent
+
+# Gateway (default bind/port may vary by version — use --help if unsure)
+highclaw gateway
+highclaw gateway --port 0   # random port
+
+# Full autonomous runtime
+highclaw daemon
+
+highclaw status
+highclaw doctor
+highclaw channel doctor
+highclaw integrations info Telegram
+
+highclaw service install
+highclaw service status
+
+# Migrate from OpenClaw (preview first)
+highclaw migrate openclaw --dry-run
+highclaw migrate openclaw
+```
+
+## Common flows
+
+1. **Onboard** — API key + provider, or interactive wizard.
+2. **Agent** — One-shot `-m` or interactive REPL / TUI.
+3. **Gateway** — When you need webhooks, channels, or HTTP API.
+
+See [Deployment](/docs/deployment) for OS-specific server notes and [Sessions](/docs/sessions) for session keys and CLI.

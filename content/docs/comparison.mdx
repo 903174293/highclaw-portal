@@ -1,0 +1,39 @@
+---
+title: HighClaw vs OpenClaw
+description: Positioning, stack, and operations compared.
+---
+
+## Positioning and goals
+
+| Dimension | HighClaw | OpenClaw |
+| --- | --- | --- |
+| Core position | High-performance, self-hosted, single-binary-first AI assistant infra (Go) | Feature-rich personal AI assistant (Node/TS) |
+| Goal | Feature coverage with stability, deployment efficiency, secure defaults | Complete UX and broad ecosystem integrations |
+| Typical use | Backend services, edge, low-resource hosts, long-running daemons | Desktop-first, frontend-centric, Node ecosystem |
+
+HighClaw is an engineering-focused **Go runtime** in the Claw ecosystem: deployable, operable, extensible.
+
+## Tech stack
+
+| Dimension | HighClaw | OpenClaw |
+| --- | --- | --- |
+| Language | Go | TypeScript (Node.js) |
+| Runtime | Native binary | Node.js |
+| Delivery | Single binary + `config.yaml` | Node + JS/TS artifacts |
+| Dependencies | Go modules, minimal system deps | Heavier npm chain |
+| Release | `make build` / `make release` multi-platform | Node build / packaging |
+
+## Resource efficiency and operations
+
+| Metric | HighClaw | OpenClaw |
+| --- | --- | --- |
+| Deployment complexity | Low (single-file-first) | Medium (Node + deps) |
+| Multi-platform release | Built-in `make release` | Depends on Node toolchain |
+| Secure defaults | Pairing, rate limit, workspace scope, allowlist | Similar, different defaults path |
+| Ops focus | Backend observability, daemon-oriented | Application features |
+
+## Conclusion
+
+- HighClaw is **not** a reduced OpenClaw clone; it is an independent **Go implementation**.
+- Focus: **performance, deployment, backend stability, low-resource operation, secure defaults**.
+- If your priority is **shipping and operating** assistant infrastructure, HighClaw is a strong fit.

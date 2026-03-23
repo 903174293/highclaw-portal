@@ -1,0 +1,59 @@
+---
+title: Deployment
+description: Build and run on macOS, Ubuntu, CentOS/RHEL, and Windows.
+---
+
+## macOS (Intel / Apple Silicon)
+
+```bash
+git clone https://github.com/903174293/highclaw.git
+cd highclaw
+make build
+./dist/highclaw onboard
+./dist/highclaw gateway
+```
+
+## Ubuntu (20.04 / 22.04 / 24.04)
+
+```bash
+sudo apt-get update
+sudo apt-get install -y make golang-go
+git clone https://github.com/903174293/highclaw.git
+cd highclaw
+make build
+sudo make install
+highclaw onboard
+highclaw daemon
+```
+
+## CentOS / RHEL / Rocky
+
+```bash
+sudo yum install -y make golang git
+git clone https://github.com/903174293/highclaw.git
+cd highclaw
+make build
+sudo make install
+highclaw onboard
+highclaw daemon
+```
+
+## Windows (PowerShell)
+
+```powershell
+git clone https://github.com/903174293/highclaw.git
+cd highclaw
+make build
+.\dist\highclaw.exe onboard
+.\dist\highclaw.exe gateway
+```
+
+Windows needs **GNU Make** (`choco install make` or MSYS2/WSL).
+
+## Why this matters
+
+- Single Go binary reduces environment drift.
+- Fast cold start and low memory improve density on edge and servers.
+- Same CLI surface across platforms lowers ops friction.
+
+For cross-compile from macOS to Linux, use `make build-linux` / `make build-linux-arm64` (see [Development](/docs/development)).
