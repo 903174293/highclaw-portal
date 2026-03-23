@@ -32,12 +32,28 @@
   },
   "dynamicRoutes": [
     {
+      "page": "/api/admin/tutorials/[id]",
+      "regex": "^/api/admin/tutorials/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/admin/tutorials/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
       "page": "/api/auth/[...all]",
       "regex": "^/api/auth/(.+?)(?:/)?$",
       "routeKeys": {
         "nxtPall": "nxtPall"
       },
       "namedRegex": "^/api/auth/(?<nxtPall>.+?)(?:/)?$"
+    },
+    {
+      "page": "/api/downloads/[filename]",
+      "regex": "^/api/downloads/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPfilename": "nxtPfilename"
+      },
+      "namedRegex": "^/api/downloads/(?<nxtPfilename>[^/]+?)(?:/)?$"
     },
     {
       "page": "/api/payment/notify/[provider]",
@@ -254,6 +270,14 @@
       "namedRegex": "^/(?<nxtPlocale>[^/]+?)/admin/subscriptions(?:/)?$"
     },
     {
+      "page": "/[locale]/admin/tutorials",
+      "regex": "^/([^/]+?)/admin/tutorials(?:/)?$",
+      "routeKeys": {
+        "nxtPlocale": "nxtPlocale"
+      },
+      "namedRegex": "^/(?<nxtPlocale>[^/]+?)/admin/tutorials(?:/)?$"
+    },
+    {
       "page": "/[locale]/admin/users",
       "regex": "^/([^/]+?)/admin/users(?:/)?$",
       "routeKeys": {
@@ -311,6 +335,14 @@
         "nxtPlocale": "nxtPlocale"
       },
       "namedRegex": "^/(?<nxtPlocale>[^/]+?)/ai\\-video\\-generator(?:/)?$"
+    },
+    {
+      "page": "/[locale]/auth-error",
+      "regex": "^/([^/]+?)/auth\\-error(?:/)?$",
+      "routeKeys": {
+        "nxtPlocale": "nxtPlocale"
+      },
+      "namedRegex": "^/(?<nxtPlocale>[^/]+?)/auth\\-error(?:/)?$"
     },
     {
       "page": "/[locale]/blog",
@@ -543,6 +575,15 @@
       "namedRegex": "^/(?<nxtPlocale>[^/]+?)/team(?:/)?$"
     },
     {
+      "page": "/[locale]/tutorials/[[...slug]]",
+      "regex": "^/([^/]+?)/tutorials(?:/(.+?))?(?:/)?$",
+      "routeKeys": {
+        "nxtPlocale": "nxtPlocale",
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/(?<nxtPlocale>[^/]+?)/tutorials(?:/(?<nxtPslug>.+?))?(?:/)?$"
+    },
+    {
       "page": "/[locale]/updates",
       "regex": "^/([^/]+?)/updates(?:/)?$",
       "routeKeys": {
@@ -586,6 +627,12 @@
       "regex": "^/ads\\.txt(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/ads\\.txt(?:/)?$"
+    },
+    {
+      "page": "/api/admin/tutorials",
+      "regex": "^/api/admin/tutorials(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/tutorials(?:/)?$"
     },
     {
       "page": "/api/ai/generate",
@@ -642,6 +689,12 @@
       "namedRegex": "^/api/docs/search(?:/)?$"
     },
     {
+      "page": "/api/downloads/list",
+      "regex": "^/api/downloads/list(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/downloads/list(?:/)?$"
+    },
+    {
       "page": "/api/email/send-email",
       "regex": "^/api/email/send\\-email(?:/)?$",
       "routeKeys": {},
@@ -670,6 +723,18 @@
       "regex": "^/api/storage/upload\\-image(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/api/storage/upload\\-image(?:/)?$"
+    },
+    {
+      "page": "/api/tutorials",
+      "regex": "^/api/tutorials(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/tutorials(?:/)?$"
+    },
+    {
+      "page": "/api/tutorials/by-path",
+      "regex": "^/api/tutorials/by\\-path(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/tutorials/by\\-path(?:/)?$"
     },
     {
       "page": "/api/user/get-user-credits",

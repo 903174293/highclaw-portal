@@ -70,6 +70,43 @@ rsync -a "$ROOT/.next/static/" "$PKG_DIR/.next/static/"
 echo ">>> rsync -a public/"
 rsync -a "$ROOT/public/" "$PKG_DIR/public/"
 
+# ---------- downloads/ ----------
+# 预编译安装包目录；若存在且非空则原样打入（保留子目录结构如 release/）
+if [[ -d "$ROOT/downloads" ]] && [[ -n "$(ls -A "$ROOT/downloads/" 2>/dev/null)" ]]; then
+  echo ">>> rsync -a downloads/"
+  rsync -a "$ROOT/downloads/" "$PKG_DIR/downloads/"
+else
+  echo ">>> WARN: downloads/ 不存在或为空，跳过（部署后可手动放置安装包）"
+  mkdir -p "$PKG_DIR/downloads"
+fi
+
+# ---------- data/ ----------
+# SQLite 数据库文件需要带上表结构；若本地有 .db 文件则 dump schema 建空库
+mkdir -p "$PKG_DIR/data"
+FOUND_DB=""
+for dbf in "$ROOT"/data/*.db; do
+  [ -f "$dbf" ] || continue
+  FOUND_DB="$dbf"
+  break
+done
+
+if [[ -n "$FOUND_DB" ]]; then
+  BASENAME="$(basename "$FOUND_DB")"
+  if command -v sqlite3 >/dev/null 2>&1; then
+    echo ">>> sqlite3: dump schema from $BASENAME (no data)"
+    sqlite3 "$FOUND_DB" ".schema" | sqlite3 "$PKG_DIR/data/$BASENAME"
+    echo ">>> OK: $PKG_DIR/data/$BASENAME (schema-only)"
+  else
+    echo ">>> WARN: sqlite3 not found, copying full db file: $BASENAME"
+    echo ">>>       建议安装 sqlite3 以仅打入表结构（brew install sqlite3）"
+    cp "$FOUND_DB" "$PKG_DIR/data/$BASENAME"
+  fi
+else
+  echo ">>> WARN: data/ 下无 .db 文件；生产首次启动前需执行 db:push 建表"
+  echo ">>>       或本地先 pnpm db:push 创建数据库后重新打包"
+fi
+
+# ---------- .env.production ----------
 # 生产运行时与 server.js 同级读取 .env.production；包内统一为该文件名
 if [[ -f "$ROOT/.env.production" ]]; then
   echo ">>> copy .env.production -> staging（来自仓库根，注意 tar 分发安全）"

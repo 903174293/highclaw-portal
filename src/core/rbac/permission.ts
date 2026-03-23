@@ -1,3 +1,4 @@
+import { defaultLocale } from '@/config/locale';
 import { redirect } from '@/core/i18n/navigation';
 import { getSignUser } from '@/shared/models/user';
 import {
@@ -60,6 +61,11 @@ export const PERMISSIONS = {
   AITASKS_READ: 'admin.ai-tasks.read',
   AITASKS_WRITE: 'admin.ai-tasks.write',
   AITASKS_DELETE: 'admin.ai-tasks.delete',
+
+  // Tutorials（后台 MD 教程，前台 /docs/tutorials 展示）
+  TUTORIALS_READ: 'admin.tutorials.read',
+  TUTORIALS_WRITE: 'admin.tutorials.write',
+  TUTORIALS_DELETE: 'admin.tutorials.delete',
 } as const;
 
 /**
@@ -251,15 +257,23 @@ export async function requireAdminAccess({
   locale?: string;
 }): Promise<void> {
   const user = await getSignUser();
+  /** 避免 locale 为空导致 redirect 异常 */
+  const loc = locale && locale.length > 0 ? locale : defaultLocale;
 
   if (!user) {
-    redirect({ href: '/sign-in', locale: locale || '' });
+    redirect({
+      href: `/sign-in?callbackUrl=${encodeURIComponent('/admin')}`,
+      locale: loc,
+    });
   }
 
   const allowed = await canAccessAdmin(user!.id);
 
   if (!allowed) {
-    redirect({ href: redirectUrl || '', locale: locale || '' });
+    redirect({
+      href: redirectUrl ?? '/no-permission',
+      locale: loc,
+    });
   }
 }
 

@@ -4,7 +4,7 @@ import { envConfigs } from '@/config';
 import { defaultLocale } from '@/config/locale';
 import { redirect } from '@/core/i18n/navigation';
 import { SignIn } from '@/shared/blocks/sign/sign-in';
-import { getConfigs } from '@/shared/models/config';
+import { getPublicConfigs } from '@/shared/models/config';
 import { getSignUser } from '@/shared/models/user';
 
 function safeInternalPath(raw?: string) {
@@ -62,7 +62,8 @@ export default async function SignInPage({
     redirect({ href: target || '/', locale });
   }
 
-  const configs = await getConfigs();
+  // 与 /api/config/get-configs 一致（含 env 合并），避免仅 DB 的 getConfigs 漏掉环境变量里的 OAuth
+  const configs = await getPublicConfigs();
 
   return (
     <SignIn

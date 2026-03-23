@@ -9,6 +9,10 @@ import { useRouter } from '@/core/i18n/navigation';
 import { defaultLocale } from '@/config/locale';
 import { Button } from '@/shared/components/ui/button';
 import { useAppContext } from '@/shared/contexts/app';
+import {
+  canUseGithubSocial,
+  canUseGoogleSocial,
+} from '@/shared/lib/oauth-social-visibility';
 import { cn } from '@/shared/lib/utils';
 import { Button as ButtonType } from '@/shared/types/blocks/common';
 
@@ -60,7 +64,14 @@ export function SocialProviders({
             setIsShowSignModal(false);
           },
           onError: (e: any) => {
-            toast.error(e?.error?.message || e?.message || 'sign in failed');
+            const raw = String(e?.error?.message || e?.message || '');
+            if (/provider not found/i.test(raw)) {
+              toast.error(
+                '该第三方登录未在服务端完整配置（需 Client ID 与 Secret）。请使用邮箱登录或检查后台 Auth 设置。'
+              );
+            } else {
+              toast.error(raw || 'sign in failed');
+            }
             setLoading(false);
           },
         }
@@ -73,7 +84,7 @@ export function SocialProviders({
 
   const providers: ButtonType[] = [];
 
-  if (configs.google_auth_enabled === 'true') {
+  if (canUseGoogleSocial(configs)) {
     providers.push({
       name: 'google',
       title: t('google_sign_in_title'),
@@ -82,7 +93,7 @@ export function SocialProviders({
     });
   }
 
-  if (configs.github_auth_enabled === 'true') {
+  if (canUseGithubSocial(configs)) {
     providers.push({
       name: 'github',
       title: t('github_sign_in_title'),

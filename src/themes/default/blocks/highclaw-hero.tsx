@@ -51,15 +51,23 @@ export function HighclawHero({ section }: { section: Section }) {
       <div className="hc-glow-orb w-[400px] h-[400px] bg-[#06b6d4] bottom-[-100px] right-[-50px] animate-[hc-pulse-glow_4s_ease-in-out_infinite_1s]" />
 
       <div className="relative z-10 container mx-auto px-4 md:px-8 py-24 text-center">
-        {/* Logo */}
-        <div className="flex justify-center mb-8 opacity-0 animate-[hc-fade-in-up_0.6s_cubic-bezier(0.16,1,0.3,1)_forwards]">
-          <div className="relative">
-            <div className="absolute inset-0 rounded-full bg-[#3b82f6]/25 blur-[60px] scale-[2]" />
+        {/* Logo：略再大一级；边缘辉光恢复早期强度（drop-shadow 不糊图，GO 仍清晰） */}
+        <div className="flex justify-center mb-5 md:mb-6 opacity-0 animate-[hc-fade-in-up_0.6s_cubic-bezier(0.16,1,0.3,1)_forwards]">
+          <div className="relative isolate">
+            <div
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[160%] max-w-[300px] md:max-w-[340px] aspect-square rounded-full bg-[#3b82f6]/22 blur-[44px] md:blur-[56px] pointer-events-none"
+              aria-hidden
+            />
             <img
               src="/highclaw.png"
               alt="HighClaw"
-              className="relative w-36 h-36 md:w-48 md:h-48 rounded-3xl"
-              style={{ filter: 'drop-shadow(0 0 40px rgba(59, 130, 246, 0.5)) drop-shadow(0 0 80px rgba(6, 182, 212, 0.2))' }}
+              width={224}
+              height={224}
+              className="relative w-44 h-44 md:w-56 md:h-56 rounded-2xl md:rounded-[1.25rem] object-contain ring-1 ring-white/10 shadow-lg shadow-black/25"
+              style={{
+                filter:
+                  'drop-shadow(0 8px 22px rgba(0, 0, 0, 0.32)) drop-shadow(0 0 40px rgba(59, 130, 246, 0.5)) drop-shadow(0 0 80px rgba(6, 182, 212, 0.2))',
+              }}
             />
           </div>
         </div>

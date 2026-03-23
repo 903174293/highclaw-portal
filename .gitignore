@@ -39,6 +39,11 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
+# 预编译安装包目录（仅保留 .gitkeep；大文件勿提交）
+/downloads/*
+!/downloads/.gitkeep
+!/downloads/README.md
+
 # env files (can opt-in for committing if needed)
 .env
 .env.local

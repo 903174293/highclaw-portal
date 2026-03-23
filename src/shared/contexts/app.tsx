@@ -13,6 +13,7 @@ import {
 
 import { getAuthClient } from '@/core/auth/client';
 import { envConfigs } from '@/config';
+import { GlobalSignModal } from '@/shared/blocks/sign/global-sign-modal';
 import { User } from '@/shared/models/user';
 
 export interface ContextValue {
@@ -176,5 +177,10 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
     ]
   );
 
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+  return (
+    <AppContext.Provider value={value}>
+      {children}
+      <GlobalSignModal />
+    </AppContext.Provider>
+  );
 };

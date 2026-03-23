@@ -32,6 +32,10 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+# 预编译安装包（downloads/）和 SQLite 数据目录（data/）
+COPY --from=builder --chown=nextjs:nodejs /app/downloads ./downloads
+RUN mkdir -p ./data && chown nextjs:nodejs ./data
+
 USER nextjs
 
 EXPOSE 3000

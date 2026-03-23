@@ -259,6 +259,27 @@ fi
 log "OK: extracted server.js present"
 # standalone 包已含运行所需 node_modules，不在服务器执行 pnpm/npm install
 
+# 确保 data/ 和 downloads/ 目录存在（SQLite 数据库 + 安装包）
+mkdir -p "$TARGET_DIR/data" "$TARGET_DIR/downloads"
+log "OK: data/ and downloads/ directories ensured"
+
+# 更新部署保留旧版 data/ 数据（数据库文件不应丢失）
+if [[ "$MODE" == "update" ]]; then
+  bak_latest="$(ls -td "${TARGET_DIR}.bak."* 2>/dev/null | head -1)"
+  if [[ -n "$bak_latest" ]] && [[ -d "$bak_latest/data" ]]; then
+    if ls "$bak_latest/data/"*.db 1>/dev/null 2>&1; then
+      log "Restoring data/*.db from backup: $bak_latest/data/"
+      cp -a "$bak_latest/data/"*.db "$TARGET_DIR/data/" 2>/dev/null || true
+    fi
+  fi
+  if [[ -n "$bak_latest" ]] && [[ -d "$bak_latest/downloads" ]]; then
+    if [[ -n "$(ls -A "$bak_latest/downloads/" 2>/dev/null)" ]]; then
+      log "Restoring downloads/ from backup: $bak_latest/downloads/"
+      rsync -a "$bak_latest/downloads/" "$TARGET_DIR/downloads/"
+    fi
+  fi
+fi
+
 if [[ ! -f "$TARGET_DIR/.env.production" ]]; then
   log "WARN: 未找到 $TARGET_DIR/.env.production"
   log "      请在目标机仓库根准备 .env.production 后重新 make release 打包，或在服务器手动创建；"

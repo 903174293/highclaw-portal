@@ -546,6 +546,31 @@ export const aiTask = table(
   ]
 );
 
+/** 后台维护的教程 Markdown，前台 /tutorials 渲染 */
+export const tutorialDoc = table(
+  'tutorial_doc',
+  {
+    id: text('id').primaryKey(),
+    locale: text('locale').notNull().default('en'),
+    slugPath: text('slug_path').notNull(),
+    title: text('title').notNull(),
+    description: text('description'),
+    contentMd: text('content_md').notNull(),
+    sortOrder: integer('sort_order').notNull().default(0),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' })
+      .default(sqliteNowMs)
+      .notNull(),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
+      .default(sqliteNowMs)
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    index('tutorial_doc_locale_slug_uq').on(table.locale, table.slugPath),
+    index('idx_tutorial_doc_locale_sort').on(table.locale, table.sortOrder),
+  ]
+);
+
 export const chat = table(
   'chat',
   {

@@ -940,6 +940,8 @@ export const publicSettingNames = [
   'google_auth_enabled',
   'google_one_tap_enabled',
   'google_client_id',
+  /** OAuth App 的 client id 本身可公开；用于前端判断是否已配置，避免误显按钮导致 Provider not found */
+  'github_client_id',
   'github_auth_enabled',
   'select_payment_enabled',
   'default_payment_provider',

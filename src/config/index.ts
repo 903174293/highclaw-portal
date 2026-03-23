@@ -8,7 +8,7 @@ export type ConfigMap = Record<string, string>;
 /**
  * 去掉尾部斜杠，便于与浏览器 Origin 字符串一致（Better Auth trustedOrigins 需精确匹配）
  */
-function normalizeOriginUrl(raw: string): string {
+export function normalizeOriginUrl(raw: string): string {
   const t = raw.trim();
   if (!t) return '';
   return t.replace(/\/+$/, '');

@@ -3,6 +3,21 @@ import { createAuthClient } from 'better-auth/react';
 
 import { envConfigs } from '@/config';
 
+/**
+ * Better Auth 客户端请求的 base URL。
+ * OAuth state 存在加密 Cookie 里，回调必须与发起登录时的**浏览器 Origin** 一致；
+ * Next 客户端打包后读不到 AUTH_URL（非 NEXT_PUBLIC_*），若与 NEXT_PUBLIC_APP_URL 或实际访问地址不一致，
+ * 会导致回调时读不到 Cookie，出现 `please_restart_the_process`。
+ */
+function resolveAuthBaseURL(): string {
+  if (typeof window !== 'undefined' && window.location?.origin) {
+    return window.location.origin.replace(/\/+$/, '');
+  }
+  const fallback =
+    envConfigs.auth_url || envConfigs.app_url || 'http://localhost:3000';
+  return fallback.replace(/\/+$/, '');
+}
+
 function createGetSessionThrottledFetch({
   minIntervalMs,
 }: {
@@ -81,7 +96,7 @@ const AUTH_GET_SESSION_MIN_INTERVAL_MS =
 
 // create default auth client, without plugins
 export const authClient = createAuthClient({
-  baseURL: envConfigs.auth_url,
+  baseURL: resolveAuthBaseURL(),
   fetchOptions: {
     // Avoid amplifying request storms (e.g. during env/db switching in dev).
     // IMPORTANT: auth mutations (sign-in/sign-up) must be non-retriable,
@@ -99,7 +114,7 @@ export const { useSession, signIn, signUp, signOut } = authClient;
 // get auth client with plugins
 export function getAuthClient(configs: Record<string, string>) {
   const authClient = createAuthClient({
-    baseURL: envConfigs.auth_url,
+    baseURL: resolveAuthBaseURL(),
     plugins: getAuthPlugins(configs),
     fetchOptions: {
       // Avoid amplifying request storms (e.g. during env/db switching in dev).

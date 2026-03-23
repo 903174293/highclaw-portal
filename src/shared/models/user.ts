@@ -88,12 +88,16 @@ export async function getUserCredits(userId: string) {
 }
 
 export async function getSignUser() {
-  const auth = await getAuth();
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  return session?.user;
+  try {
+    const auth = await getAuth();
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+    return session?.user;
+  } catch (e) {
+    console.error('getSignUser failed', e);
+    return undefined;
+  }
 }
 
 export async function isEmailVerified(email: string): Promise<boolean> {

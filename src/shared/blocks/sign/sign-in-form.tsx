@@ -12,6 +12,10 @@ import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
 import { useAppContext } from '@/shared/contexts/app';
+import {
+  canUseGithubSocial,
+  canUseGoogleSocial,
+} from '@/shared/lib/oauth-social-visibility';
 
 import { SignMethodDivider } from './sign-method-divider';
 import { SocialProviders } from './social-providers';
@@ -32,11 +36,11 @@ export function SignInForm({
 
   const { configs } = useAppContext();
 
-  const isGoogleAuthEnabled = configs.google_auth_enabled === 'true';
-  const isGithubAuthEnabled = configs.github_auth_enabled === 'true';
+  const isGoogleAuthEnabled = canUseGoogleSocial(configs);
+  const isGithubAuthEnabled = canUseGithubSocial(configs);
   const isEmailAuthEnabled =
     configs.email_auth_enabled !== 'false' ||
-    (!isGoogleAuthEnabled && !isGithubAuthEnabled); // no social providers enabled, auto enable email auth
+    (!isGoogleAuthEnabled && !isGithubAuthEnabled); // 无可用的社交登录时默认展示邮箱登录
 
   const hasSocialLogin = isGoogleAuthEnabled || isGithubAuthEnabled;
 

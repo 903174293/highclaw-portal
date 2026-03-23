@@ -21,6 +21,11 @@
         {
           "title": "文档",
           "url": "/docs",
+          "icon": "Library"
+        },
+        {
+          "title": "教程",
+          "url": "/tutorials",
           "icon": "BookOpenText"
         },
         {
@@ -162,5 +167,9 @@
     },
     "show_theme": true,
     "show_locale": true
+  },
+  "tutorials_layout": {
+    "nav_title": "教程目录",
+    "empty": "暂无教程页面。"
   }
 }

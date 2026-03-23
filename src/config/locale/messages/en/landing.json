@@ -19,8 +19,13 @@
           "icon": "Download"
         },
         {
-          "title": "Tutorials",
+          "title": "Docs",
           "url": "/docs",
+          "icon": "Library"
+        },
+        {
+          "title": "Tutorials",
+          "url": "/tutorials",
           "icon": "BookOpenText"
         },
         {
@@ -164,5 +169,9 @@
     "show_built_with": false,
     "show_theme": true,
     "show_locale": true
+  },
+  "tutorials_layout": {
+    "nav_title": "Tutorials",
+    "empty": "No pages yet."
   }
 }

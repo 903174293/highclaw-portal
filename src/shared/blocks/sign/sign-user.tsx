@@ -26,7 +26,6 @@ import { User as UserType } from '@/shared/models/user';
 import { NavItem, UserNav } from '@/shared/types/blocks/common';
 
 import { SmartIcon } from '../common/smart-icon';
-import { SignModal } from './sign-modal';
 
 function extractSessionUser(data: any): UserType | null {
   const u = data?.user ?? data?.data?.user ?? null;
@@ -256,7 +255,6 @@ export function SignUser({
           >
             {t('sign_in_title')}
           </Button>
-          <SignModal />
         </div>
       )}
     </>

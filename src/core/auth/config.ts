@@ -3,7 +3,7 @@ import { oneTap } from 'better-auth/plugins';
 import { getLocale } from 'next-intl/server';
 
 import { db } from '@/core/db';
-import { envConfigs, getTrustedOrigins } from '@/config';
+import { envConfigs, getTrustedOrigins, normalizeOriginUrl } from '@/config';
 import * as schema from '@/config/db/schema';
 import { VerifyEmail } from '@/shared/blocks/email/verify-email';
 import {
@@ -22,6 +22,21 @@ import { grantRoleForNewUser } from '@/shared/services/rbac';
 // and to add a server-side throttle beyond any client-side cooldown.
 const recentVerificationEmailSentAt = new Map<string, number>();
 const VERIFICATION_EMAIL_MIN_INTERVAL_MS = 60_000;
+
+/**
+ * 从当前 HTTP 请求解析站点 Origin（与浏览器地址栏 Host 一致）。
+ * 用于 OAuth：redirect_uri 与 Set-Cookie 的 Host 必须一致，否则 state Cookie 在回调时带不上 → please_restart_the_process。
+ */
+function resolveAuthBaseURLFromRequest(request: Request | null | undefined): string {
+  if (!request) {
+    return '';
+  }
+  try {
+    return normalizeOriginUrl(new URL(request.url).origin);
+  } catch {
+    return '';
+  }
+}
 
 // Static auth options - NO database connection
 // This ensures zero database calls during build time
@@ -71,12 +86,50 @@ const authOptions = {
 };
 
 // get auth options with configs
-export async function getAuthOptions(configs: Record<string, string>) {
+export async function getAuthOptions(
+  configs: Record<string, string>,
+  /** 传入 /api/auth 收到的 Request 时，优先用其 Origin 作为 baseURL，避免 .env 里 AUTH_URL 与浏览器 Host 不一致 */
+  request?: Request | null
+) {
   const emailVerificationEnabled =
     configs.email_verification_enabled === 'true' && !!configs.resend_api_key;
 
+  const fromRequest = resolveAuthBaseURLFromRequest(request ?? null);
+
+  /** 不能为空；API 路由优先跟随实际请求的 Host（localhost vs 127.0.0.1） */
+  const baseURL = normalizeOriginUrl(
+    fromRequest ||
+      envConfigs.auth_url ||
+      envConfigs.app_url ||
+      'http://localhost:3000'
+  );
+
+  /** 当前访问 Origin 一并加入，避免 trustedOrigins 只配了另一套 Host 时 OAuth 回调被拒 */
+  const trustedOrigins = [
+    ...new Set([...getTrustedOrigins(), baseURL].filter(Boolean)),
+  ];
+
+  const isDev = process.env.NODE_ENV === 'development';
+
+  /**
+   * 生产模式 + HTTP（如本地 pnpm start）时，若默认 Secure Cookie，浏览器在 http 下不会保存/携带 OAuth state → please_restart_the_process。
+   * AUTH_COOKIE_SECURE: 显式 true/false 覆盖自动推断（staging 常用）。
+   */
+  const useSecureCookies =
+    process.env.AUTH_COOKIE_SECURE === 'true'
+      ? true
+      : process.env.AUTH_COOKIE_SECURE === 'false'
+        ? false
+        : baseURL.startsWith('https://');
+
   return {
     ...authOptions,
+    baseURL,
+    trustedOrigins,
+    advanced: {
+      ...(authOptions.advanced ?? {}),
+      useSecureCookies,
+    },
     // Add database connection only when actually needed (runtime)
     database: envConfigs.database_url
       ? drizzleAdapter(db(), {
@@ -205,6 +258,20 @@ export async function getAuthOptions(configs: Record<string, string>) {
       configs.google_client_id && configs.google_one_tap_enabled === 'true'
         ? [oneTap()]
         : [],
+    /** 替代内置 /api/auth/error 空白页，并把 error 参数带到可读页面 */
+    onAPIError: {
+      throw: false,
+      errorURL: `${baseURL}/auth-error`,
+      onError: (err: unknown) => {
+        if (isDev) {
+          console.error('[better-auth] onAPIError:', err);
+        }
+      },
+    },
+    logger: {
+      verboseLogging: isDev,
+      disabled: !isDev,
+    },
   };
 }
 

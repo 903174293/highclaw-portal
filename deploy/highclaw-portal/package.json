@@ -124,6 +124,7 @@
     "react-hook-form": "^7.62.0",
     "react-icons": "^5.5.0",
     "react-lazy-load-image-component": "^1.6.3",
+    "react-markdown": "^10.1.0",
     "react-use-measure": "^2.1.7",
     "recharts": "2.15.4",
     "rehype-autolink-headings": "^7.1.0",

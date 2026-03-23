@@ -251,6 +251,29 @@ const defaultPermissions = [
     description: 'Delete AI tasks',
   },
 
+  // Tutorials (Markdown, /tutorials)
+  {
+    code: 'admin.tutorials.read',
+    resource: 'tutorials',
+    action: 'read',
+    title: 'Read Tutorials',
+    description: 'View tutorial documents',
+  },
+  {
+    code: 'admin.tutorials.write',
+    resource: 'tutorials',
+    action: 'write',
+    title: 'Write Tutorials',
+    description: 'Create and update tutorial documents',
+  },
+  {
+    code: 'admin.tutorials.delete',
+    resource: 'tutorials',
+    action: 'delete',
+    title: 'Delete Tutorials',
+    description: 'Delete tutorial documents',
+  },
+
   // Wildcard permission for super admin
   {
     code: '*',
@@ -288,6 +311,7 @@ const defaultRoles = [
       'admin.apikeys.*',
       'admin.settings.read',
       'admin.ai-tasks.*',
+      'admin.tutorials.*',
     ],
   },
   {
@@ -302,6 +326,8 @@ const defaultRoles = [
       'admin.posts.write',
       'admin.categories.read',
       'admin.categories.write',
+      'admin.tutorials.read',
+      'admin.tutorials.write',
     ],
   },
   {

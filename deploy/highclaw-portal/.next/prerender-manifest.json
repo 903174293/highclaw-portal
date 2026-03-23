@@ -38,7 +38,7 @@
           "value": "multipart/form-data;.*"
         }
       ],
-      "initialRevalidateSeconds": 86400,
+      "initialRevalidateSeconds": 3600,
       "initialExpireSeconds": 31536000,
       "srcRoute": "/[locale]/docs/[[...slug]]",
       "dataRoute": "/en/docs.rsc",
@@ -64,7 +64,7 @@
           "value": "multipart/form-data;.*"
         }
       ],
-      "initialRevalidateSeconds": 86400,
+      "initialRevalidateSeconds": 3600,
       "initialExpireSeconds": 31536000,
       "srcRoute": "/[locale]/docs/[[...slug]]",
       "dataRoute": "/zh/docs.rsc",

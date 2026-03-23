@@ -53,5 +53,15 @@
   "locale_detector": {
     "title": "We detected your browser language is {locale}. Switch to it?",
     "switch_to": "Switch to {locale}"
+  },
+  "auth_error": {
+    "page_title": "Authentication error",
+    "page_description": "Sign-in could not be completed. Details are below.",
+    "code_label": "Error code",
+    "detail_label": "Detail",
+    "hint_title": "What to try",
+    "hint_default": "Return to sign-in and try again. For Google/GitHub, ensure redirect URIs and .env (NEXT_PUBLIC_APP_URL / AUTH_URL) match your browser address exactly—do not mix localhost and 127.0.0.1.",
+    "back_sign_in": "Back to Sign In",
+    "dev_tip": "Dev mode: watch the terminal for [better-auth] logs."
   }
 }

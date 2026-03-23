@@ -53,5 +53,15 @@
   "locale_detector": {
     "title": "检测到浏览器语言是: {locale}，是否切换？",
     "switch_to": "切换到{locale}"
+  },
+  "auth_error": {
+    "page_title": "登录出错",
+    "page_description": "无法完成登录，请查看下方说明。",
+    "code_label": "错误码",
+    "detail_label": "详情",
+    "hint_title": "建议处理",
+    "hint_default": "请返回登录页重试。若使用 Google/GitHub，请确认控制台回调地址与 .env 中 NEXT_PUBLIC_APP_URL、AUTH_URL 与浏览器地址栏完全一致，且不要混用 localhost 与 127.0.0.1。",
+    "back_sign_in": "返回登录",
+    "dev_tip": "开发模式：可在终端查看 [better-auth] 相关日志。"
   }
 }

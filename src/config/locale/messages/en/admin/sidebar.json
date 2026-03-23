@@ -49,6 +49,11 @@
               "title": "Posts",
               "icon": "FileText",
               "url": "/admin/posts"
+            },
+            {
+              "title": "Tutorials (MD)",
+              "icon": "BookOpen",
+              "url": "/admin/tutorials"
             }
           ]
         },

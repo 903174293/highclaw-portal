@@ -1,16 +1,26 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IconDownload, IconExternalLink, IconBrandWindows } from '@tabler/icons-react';
 import { SiApple, SiLinux } from 'react-icons/si';
+
+import { useSession } from '@/core/auth/client';
 import { Section } from '@/shared/types/blocks/landing';
+import { useAppContext } from '@/shared/contexts/app';
+
+type PlatformKey =
+  | 'darwin-arm64'
+  | 'darwin-amd64'
+  | 'windows-amd64'
+  | 'windows-arm64'
+  | 'linux-amd64'
+  | 'linux-arm64';
 
 interface Platform {
   name: string;
   arch: string;
   icon: React.ComponentType<{ size?: number; className?: string }>;
-  filename: string;
-  downloadUrl: string;
+  key: PlatformKey;
   detectKey: string[];
 }
 
@@ -19,71 +29,60 @@ const platforms: Platform[] = [
     name: 'macOS',
     arch: 'Apple Silicon',
     icon: SiApple,
-    filename: 'highclaw-darwin-arm64.tar.gz',
-    downloadUrl: '#',
+    key: 'darwin-arm64',
     detectKey: ['Mac', 'arm64', 'ARM64'],
   },
   {
     name: 'macOS',
     arch: 'Intel',
     icon: SiApple,
-    filename: 'highclaw-darwin-amd64.tar.gz',
-    downloadUrl: '#',
+    key: 'darwin-amd64',
     detectKey: ['Mac', 'Intel', 'x86_64'],
   },
   {
     name: 'Windows',
     arch: 'x64',
     icon: IconBrandWindows,
-    filename: 'highclaw-windows-amd64.zip',
-    downloadUrl: '#',
+    key: 'windows-amd64',
     detectKey: ['Win', 'x64', 'AMD64'],
   },
   {
     name: 'Windows',
     arch: 'ARM',
     icon: IconBrandWindows,
-    filename: 'highclaw-windows-arm64.zip',
-    downloadUrl: '#',
+    key: 'windows-arm64',
     detectKey: ['Win', 'ARM'],
   },
   {
     name: 'Linux',
     arch: 'x64',
     icon: SiLinux,
-    filename: 'highclaw-linux-amd64.tar.gz',
-    downloadUrl: '#',
+    key: 'linux-amd64',
     detectKey: ['Linux', 'x86_64', 'x64'],
   },
   {
     name: 'Linux',
     arch: 'ARM64',
     icon: SiLinux,
-    filename: 'highclaw-linux-arm64.tar.gz',
-    downloadUrl: '#',
+    key: 'linux-arm64',
     detectKey: ['Linux', 'aarch64', 'arm64'],
   },
 ];
 
+/** 根据 UA 推荐平台索引 */
 function detectPlatform(): number {
   if (typeof navigator === 'undefined') return 0;
   const ua = navigator.userAgent;
   const platform = navigator.platform || '';
 
-  // macOS Apple Silicon
   if (/Mac/.test(platform)) {
-    // Heuristic: newer Macs are Apple Silicon
     if (/ARM/.test(ua) || /arm64/.test(ua)) return 0;
-    // If running Chrome/Safari on Apple Silicon, userAgent may not say ARM
-    // Default to Apple Silicon for newer detection
-    return 0;
+    return 1;
   }
-  // Windows
   if (/Win/.test(platform)) {
     if (/ARM/.test(ua)) return 3;
     return 2;
   }
-  // Linux
   if (/Linux/.test(platform)) {
     if (/aarch64|arm64/.test(ua)) return 5;
     return 4;
@@ -91,29 +90,63 @@ function detectPlatform(): number {
   return 0;
 }
 
-export function HighclawDownload({ section }: { section: Section }) {
+/**
+ * 从实际文件名中提取版本信息（commit hash 或语义版本号）。
+ * 例如 "highclaw-dc6ef1a-dirty-darwin-arm64.tar.gz" → "dc6ef1a-dirty"
+ * 例如 "highclaw-v1.2.3-darwin-arm64.tar.gz" → "v1.2.3"
+ */
+function extractVersion(filename: string | null): string {
+  if (!filename) return '';
+  const base = filename.split('/').pop() || '';
+  const match = base.match(/^highclaw-(.+?)-(darwin|linux|windows)/);
+  return match?.[1] || '';
+}
+
+export function HighclawDownload({ section: _section }: { section: Section }) {
   const [detected, setDetected] = useState<number>(0);
+  const { data: session, isPending } = useSession();
+  const { setIsShowSignModal } = useAppContext();
+  const loggedIn = !!session?.user;
+
+  /** 各平台实际文件的相对路径映射 */
+  const [fileMap, setFileMap] = useState<Record<PlatformKey, string | null>>(
+    {} as Record<PlatformKey, string | null>
+  );
+
+  const openSignModal = () => setIsShowSignModal(true);
 
   useEffect(() => {
     setDetected(detectPlatform());
+    fetch('/api/downloads/list')
+      .then((r) => r.json())
+      .then((json) => {
+        if (json?.data) setFileMap(json.data);
+      })
+      .catch(() => {});
   }, []);
 
   const recommended = platforms[detected];
+  const MainIcon = recommended.icon;
+  const recommendedFile = fileMap[recommended.key];
+  const version = extractVersion(recommendedFile) || 'latest';
+
+  /** 下载链接：用 platformKey 作为参数，服务端自动匹配文件 */
+  const downloadHref = (key: PlatformKey) =>
+    `/api/downloads/${encodeURIComponent(key)}`;
 
   return (
     <section className="py-24 md:py-32">
       <div className="container mx-auto px-4 md:px-8">
-        {/* Header */}
         <div className="text-center mb-16">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 hc-gradient-text">
             Download HighClaw
           </h1>
           <p className="text-lg text-[#94a3b8]">
-            Single binary, zero runtime dependencies. Available for all major platforms.
+            Single binary, zero runtime dependencies. Sign in to download official builds.
           </p>
         </div>
 
-        {/* Auto-detected hero card */}
+        {/* 推荐平台卡片 */}
         <div className="max-w-lg mx-auto mb-16">
           <div className="hc-glass p-8 text-center relative overflow-hidden">
             <div className="absolute top-3 right-3">
@@ -121,18 +154,41 @@ export function HighclawDownload({ section }: { section: Section }) {
                 Recommended for your system
               </span>
             </div>
-            <recommended.icon size={48} className="text-[#f8fafc] mx-auto mb-4 mt-4" />
+            <MainIcon size={48} className="text-[#f8fafc] mx-auto mb-4 mt-4" />
             <h3 className="text-xl font-semibold text-[#f8fafc] mb-1">
               {recommended.name} ({recommended.arch})
             </h3>
-            <p className="text-sm font-mono text-[#64748b] mb-6">{recommended.filename}</p>
-            <a
-              href={recommended.downloadUrl}
-              className="hc-btn-primary inline-flex items-center gap-2 px-8 py-3 rounded-lg text-base font-semibold"
-            >
-              <IconDownload size={20} />
-              Download v1.0.0
-            </a>
+            <p className="text-sm font-mono text-[#64748b] mb-1">
+              {recommendedFile?.split('/').pop() || `highclaw-${recommended.key}`}
+            </p>
+            {version && (
+              <p className="text-xs font-mono text-[#3b82f6] mb-5">{version}</p>
+            )}
+            {loggedIn ? (
+              recommendedFile ? (
+                <a
+                  href={downloadHref(recommended.key)}
+                  className="hc-btn-primary inline-flex items-center gap-2 px-8 py-3 rounded-lg text-base font-semibold"
+                >
+                  <IconDownload size={20} />
+                  Download
+                </a>
+              ) : (
+                <span className="inline-flex items-center gap-2 px-8 py-3 rounded-lg text-base text-[#64748b]">
+                  Not available yet
+                </span>
+              )
+            ) : (
+              <button
+                type="button"
+                disabled={isPending}
+                onClick={openSignModal}
+                className="hc-btn-primary inline-flex items-center gap-2 px-8 py-3 rounded-lg text-base font-semibold"
+              >
+                <IconDownload size={20} />
+                Download
+              </button>
+            )}
             <p className="text-xs text-[#64748b] mt-4">
               Or install from source:{' '}
               <code className="text-[#7dd3fc]">make build && make install</code>
@@ -140,40 +196,61 @@ export function HighclawDownload({ section }: { section: Section }) {
           </div>
         </div>
 
-        {/* Multi-platform grid */}
+        {/* 全平台列表 */}
         <div className="max-w-4xl mx-auto">
           <h3 className="text-lg font-semibold text-[#f8fafc] mb-6 text-center">All Platforms</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {platforms.map((platform, idx) => (
-              <div
-                key={idx}
-                className={`hc-glass hc-glass-hover p-5 text-center ${
-                  idx === detected ? 'border-[#3b82f6]/30' : ''
-                }`}
-              >
-                <platform.icon size={32} className="text-[#94a3b8] mx-auto mb-3" />
-                <h4 className="text-sm font-semibold text-[#f8fafc]">
-                  {platform.name} ({platform.arch})
-                </h4>
-                <p className="text-xs font-mono text-[#64748b] mt-1 mb-4">{platform.filename}</p>
-                <a
-                  href={platform.downloadUrl}
-                  className="hc-btn-ghost inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium"
+            {platforms.map((platform, idx) => {
+              const PIcon = platform.icon;
+              const file = fileMap[platform.key];
+              const available = !!file;
+              return (
+                <div
+                  key={platform.key}
+                  className={`hc-glass hc-glass-hover p-5 text-center ${
+                    idx === detected ? 'border-[#3b82f6]/30' : ''
+                  }`}
                 >
-                  <IconDownload size={16} />
-                  Download
-                </a>
-              </div>
-            ))}
+                  <PIcon size={32} className="text-[#94a3b8] mx-auto mb-3" />
+                  <h4 className="text-sm font-semibold text-[#f8fafc]">
+                    {platform.name} ({platform.arch})
+                  </h4>
+                  <p className="text-xs font-mono text-[#64748b] mt-1 mb-4 truncate" title={file || ''}>
+                    {file?.split('/').pop() || '—'}
+                  </p>
+                  {loggedIn ? (
+                    available ? (
+                      <a
+                        href={downloadHref(platform.key)}
+                        className="hc-btn-ghost inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium"
+                      >
+                        <IconDownload size={16} />
+                        Download
+                      </a>
+                    ) : (
+                      <span className="text-xs text-[#475569]">Not available</span>
+                    )
+                  ) : (
+                    <button
+                      type="button"
+                      disabled={isPending}
+                      onClick={openSignModal}
+                      className="hc-btn-ghost inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium"
+                    >
+                      <IconDownload size={16} />
+                      Download
+                    </button>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
 
-        {/* Version & requirements */}
         <div className="text-center mt-12 space-y-3">
-          <p className="text-[#f8fafc] font-mono text-lg font-bold">v1.0.0</p>
-          <p className="text-sm text-[#64748b]">
-            Go 1.22+ (build from source only) | Single binary, zero dependencies
-          </p>
+          {version && (
+            <p className="text-[#f8fafc] font-mono text-lg font-bold">{version}</p>
+          )}
           <a
             href="https://github.com/903174293/highclaw/releases"
             target="_blank"

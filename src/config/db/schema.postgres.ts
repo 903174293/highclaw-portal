@@ -6,6 +6,7 @@ import {
   pgTable,
   text,
   timestamp,
+  uniqueIndex,
 } from 'drizzle-orm/pg-core';
 
 import { envConfigs } from '@/config';
@@ -504,6 +505,30 @@ export const aiTask = table(
     // Composite: Query user's AI tasks by media type and provider
     // Can also be used for: WHERE mediaType = ? AND provider = ? (left-prefix)
     index('idx_ai_task_media_type_status').on(table.mediaType, table.status),
+  ]
+);
+
+/** 后台维护的教程 Markdown，前台 /docs/tutorials 渲染 */
+export const tutorialDoc = table(
+  'tutorial_doc',
+  {
+    id: text('id').primaryKey(),
+    locale: text('locale').notNull().default('en'),
+    /** 相对路径，如 intro、install/macos（不含前导斜杠） */
+    slugPath: text('slug_path').notNull(),
+    title: text('title').notNull(),
+    description: text('description'),
+    contentMd: text('content_md').notNull(),
+    sortOrder: integer('sort_order').notNull().default(0),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at')
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    uniqueIndex('tutorial_doc_locale_slug_uq').on(table.locale, table.slugPath),
+    index('idx_tutorial_doc_locale_sort').on(table.locale, table.sortOrder),
   ]
 );
 
