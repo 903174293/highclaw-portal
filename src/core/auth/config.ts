@@ -15,7 +15,7 @@ import { getUuid } from '@/shared/lib/hash';
 import { getClientIp } from '@/shared/lib/ip';
 import { grantCreditsForNewUser } from '@/shared/models/credit';
 import { getEmailService } from '@/shared/services/email';
-import { grantRoleForNewUser } from '@/shared/services/rbac';
+import { autoGrantSuperAdmin, grantRoleForNewUser } from '@/shared/services/rbac';
 
 // Best-effort dedupe to prevent sending verification emails too frequently.
 // This is especially helpful in dev/hot reload, transient network conditions,
@@ -26,13 +26,41 @@ const VERIFICATION_EMAIL_MIN_INTERVAL_MS = 60_000;
 /**
  * 从当前 HTTP 请求解析站点 Origin（与浏览器地址栏 Host 一致）。
  * 用于 OAuth：redirect_uri 与 Set-Cookie 的 Host 必须一致，否则 state Cookie 在回调时带不上 → please_restart_the_process。
+ *
+ * Host 优先级：X-Forwarded-Host > Host header > request.url（fallback）
+ * 协议优先级：X-Forwarded-Proto > 配置推断（AUTH_URL/APP_URL 同域名则跟随其协议）> http
+ *
+ * 典型生产链路：CDN 终止 SSL → Nginx (HTTP) → Node.js (HTTP)
+ * 此时 Nginx 的 $scheme=http，X-Forwarded-Proto=http，但用户实际通过 https 访问。
+ * 通过比对配置的 AUTH_URL 域名来修正协议。
  */
 function resolveAuthBaseURLFromRequest(request: Request | null | undefined): string {
   if (!request) {
     return '';
   }
   try {
-    return normalizeOriginUrl(new URL(request.url).origin);
+    const forwarded = request.headers.get('x-forwarded-host');
+    const host = forwarded || request.headers.get('host');
+    if (!host) {
+      return normalizeOriginUrl(new URL(request.url).origin);
+    }
+
+    const cleanHost = host.split(',')[0].trim();
+    const forwardedProto = request.headers.get('x-forwarded-proto');
+    let scheme = forwardedProto ? forwardedProto.split(',')[0].trim() : 'http';
+
+    if (scheme === 'http') {
+      const hostWithoutPort = cleanHost.split(':')[0];
+      const configuredUrl = envConfigs.auth_url || envConfigs.app_url || '';
+      try {
+        const u = new URL(configuredUrl);
+        if (u.hostname === hostWithoutPort && u.protocol === 'https:') {
+          scheme = 'https';
+        }
+      } catch { /* 配置为空或不合法时忽略 */ }
+    }
+
+    return normalizeOriginUrl(`${scheme}://${cleanHost}`);
   } catch {
     return '';
   }
@@ -196,6 +224,22 @@ export async function getAuthOptions(
             } catch (e) {
               console.log('grant credits or role for new user failed', e);
             }
+          },
+        },
+      },
+      session: {
+        create: {
+          after: async (session: any) => {
+            try {
+              if (session?.userId) {
+                const { user: userTable } = await import('@/config/db/schema');
+                const { eq } = await import('drizzle-orm');
+                const [u] = await db().select().from(userTable).where(eq(userTable.id, session.userId));
+                if (u) {
+                  await autoGrantSuperAdmin(u);
+                }
+              }
+            } catch { /* best-effort */ }
           },
         },
       },

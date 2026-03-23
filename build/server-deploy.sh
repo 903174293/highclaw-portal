@@ -269,7 +269,31 @@ if [[ "$MODE" == "update" ]]; then
   if [[ -n "$bak_latest" ]] && [[ -d "$bak_latest/data" ]]; then
     if ls "$bak_latest/data/"*.db 1>/dev/null 2>&1; then
       log "Restoring data/*.db from backup: $bak_latest/data/"
+      # 先保留新包的 db 副本（含最新 RBAC 种子数据）
+      for newdb in "$TARGET_DIR/data/"*.db; do
+        [ -f "$newdb" ] && cp "$newdb" "${newdb}.seed" 2>/dev/null || true
+      done
+      # 恢复旧数据库（保留用户数据）
       cp -a "$bak_latest/data/"*.db "$TARGET_DIR/data/" 2>/dev/null || true
+      # 把新包的 RBAC 种子数据合并到旧库（仅当旧库 role 表为空时）
+      if command -v sqlite3 >/dev/null 2>&1; then
+        for olddb in "$TARGET_DIR/data/"*.db; do
+          [ -f "$olddb" ] || continue
+          seeddb="${olddb}.seed"
+          [ -f "$seeddb" ] || continue
+          ROLE_COUNT=$(sqlite3 "$olddb" "SELECT count(*) FROM role;" 2>/dev/null || echo "0")
+          if [[ "$ROLE_COUNT" -eq 0 ]]; then
+            log "Merging RBAC seed data into restored $(basename "$olddb")"
+            for tbl in role permission role_permission; do
+              sqlite3 "$seeddb" ".mode insert $tbl" "SELECT * FROM $tbl;" 2>/dev/null | sqlite3 "$olddb" 2>/dev/null || true
+            done
+          fi
+          rm -f "$seeddb"
+        done
+      else
+        rm -f "$TARGET_DIR/data/"*.seed 2>/dev/null || true
+        log "WARN: sqlite3 not found, cannot merge RBAC seed data"
+      fi
     fi
   fi
   if [[ -n "$bak_latest" ]] && [[ -d "$bak_latest/downloads" ]]; then
@@ -345,6 +369,7 @@ server {
         proxy_pass http://highclaw_portal_app;
         proxy_http_version 1.1;
         proxy_set_header Host \$host;
+        proxy_set_header X-Forwarded-Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto \$scheme;

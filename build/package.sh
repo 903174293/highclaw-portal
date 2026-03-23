@@ -95,7 +95,18 @@ if [[ -n "$FOUND_DB" ]]; then
   if command -v sqlite3 >/dev/null 2>&1; then
     echo ">>> sqlite3: dump schema from $BASENAME (no data)"
     sqlite3 "$FOUND_DB" ".schema" | sqlite3 "$PKG_DIR/data/$BASENAME"
-    echo ">>> OK: $PKG_DIR/data/$BASENAME (schema-only)"
+
+    # RBAC 种子数据：角色、权限、角色-权限关联（生产首次启动即可用后台）
+    RBAC_TABLES="role permission role_permission"
+    for tbl in $RBAC_TABLES; do
+      COUNT=$(sqlite3 "$FOUND_DB" "SELECT count(*) FROM $tbl;" 2>/dev/null || echo "0")
+      if [[ "$COUNT" -gt 0 ]]; then
+        echo ">>> sqlite3: seed $tbl ($COUNT rows)"
+        sqlite3 "$FOUND_DB" ".mode insert $tbl" "SELECT * FROM $tbl;" | sqlite3 "$PKG_DIR/data/$BASENAME"
+      fi
+    done
+
+    echo ">>> OK: $PKG_DIR/data/$BASENAME (schema + RBAC seed)"
   else
     echo ">>> WARN: sqlite3 not found, copying full db file: $BASENAME"
     echo ">>>       建议安装 sqlite3 以仅打入表结构（brew install sqlite3）"

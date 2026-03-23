@@ -66,6 +66,7 @@ export const envConfigs: ConfigMap = {
    */
   google_auth_enabled: process.env.GOOGLE_AUTH_ENABLED ?? '',
   github_auth_enabled: process.env.GITHUB_AUTH_ENABLED ?? '',
+  admin_email: process.env.ADMIN_EMAIL ?? '',
   version: packageJson.version,
   locale_detect_enabled:
     process.env.NEXT_PUBLIC_LOCALE_DETECT_ENABLED ?? 'false',

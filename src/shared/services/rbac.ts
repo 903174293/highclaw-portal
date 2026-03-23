@@ -422,6 +422,111 @@ export async function getUsersByRole(roleId: string): Promise<string[]> {
   return result.map((r: any) => r.userId);
 }
 
+/**
+ * RBAC 表为空时自动初始化默认角色和权限。
+ * 仅在首次需要时执行一次，后续调用会检测到数据已存在直接跳过。
+ */
+async function ensureRbacSeeded(): Promise<void> {
+  const existing = await getRoles();
+  if (existing.length > 0) return;
+
+  console.log('[RBAC] tables empty, auto-seeding default roles & permissions...');
+
+  const defaultPermissions = [
+    { code: 'admin.access', resource: 'admin', action: 'access', title: 'Admin Access', description: 'Access to admin area' },
+    { code: 'admin.users.read', resource: 'users', action: 'read', title: 'Read Users', description: 'View user list and details' },
+    { code: 'admin.users.write', resource: 'users', action: 'write', title: 'Write Users', description: 'Create and update users' },
+    { code: 'admin.users.delete', resource: 'users', action: 'delete', title: 'Delete Users', description: 'Delete users' },
+    { code: 'admin.posts.read', resource: 'posts', action: 'read', title: 'Read Posts', description: 'View post list and details' },
+    { code: 'admin.posts.write', resource: 'posts', action: 'write', title: 'Write Posts', description: 'Create and update posts' },
+    { code: 'admin.posts.delete', resource: 'posts', action: 'delete', title: 'Delete Posts', description: 'Delete posts' },
+    { code: 'admin.categories.read', resource: 'categories', action: 'read', title: 'Read Categories', description: 'View categories' },
+    { code: 'admin.categories.write', resource: 'categories', action: 'write', title: 'Write Categories', description: 'Create and update categories' },
+    { code: 'admin.categories.delete', resource: 'categories', action: 'delete', title: 'Delete Categories', description: 'Delete categories' },
+    { code: 'admin.payments.read', resource: 'payments', action: 'read', title: 'Read Payments', description: 'View payments' },
+    { code: 'admin.subscriptions.read', resource: 'subscriptions', action: 'read', title: 'Read Subscriptions', description: 'View subscriptions' },
+    { code: 'admin.credits.read', resource: 'credits', action: 'read', title: 'Read Credits', description: 'View credits' },
+    { code: 'admin.credits.write', resource: 'credits', action: 'write', title: 'Write Credits', description: 'Grant or consume credits' },
+    { code: 'admin.apikeys.read', resource: 'apikeys', action: 'read', title: 'Read API Keys', description: 'View API keys' },
+    { code: 'admin.apikeys.write', resource: 'apikeys', action: 'write', title: 'Write API Keys', description: 'Create and update API keys' },
+    { code: 'admin.apikeys.delete', resource: 'apikeys', action: 'delete', title: 'Delete API Keys', description: 'Delete API keys' },
+    { code: 'admin.settings.read', resource: 'settings', action: 'read', title: 'Read Settings', description: 'View system settings' },
+    { code: 'admin.settings.write', resource: 'settings', action: 'write', title: 'Write Settings', description: 'Update system settings' },
+    { code: 'admin.roles.read', resource: 'roles', action: 'read', title: 'Read Roles', description: 'View roles' },
+    { code: 'admin.roles.write', resource: 'roles', action: 'write', title: 'Write Roles', description: 'Create and update roles' },
+    { code: 'admin.roles.delete', resource: 'roles', action: 'delete', title: 'Delete Roles', description: 'Delete roles' },
+    { code: 'admin.permissions.read', resource: 'permissions', action: 'read', title: 'Read Permissions', description: 'View permissions' },
+    { code: 'admin.permissions.write', resource: 'permissions', action: 'write', title: 'Write Permissions', description: 'Create and update permissions' },
+    { code: 'admin.permissions.delete', resource: 'permissions', action: 'delete', title: 'Delete Permissions', description: 'Delete permissions' },
+    { code: 'admin.ai-tasks.read', resource: 'ai-tasks', action: 'read', title: 'Read AI Tasks', description: 'View AI tasks' },
+    { code: 'admin.ai-tasks.write', resource: 'ai-tasks', action: 'write', title: 'Write AI Tasks', description: 'Create and update AI tasks' },
+    { code: 'admin.ai-tasks.delete', resource: 'ai-tasks', action: 'delete', title: 'Delete AI Tasks', description: 'Delete AI tasks' },
+    { code: 'admin.tutorials.read', resource: 'tutorials', action: 'read', title: 'Read Tutorials', description: 'View tutorials' },
+    { code: 'admin.tutorials.write', resource: 'tutorials', action: 'write', title: 'Write Tutorials', description: 'Create and update tutorials' },
+    { code: 'admin.tutorials.delete', resource: 'tutorials', action: 'delete', title: 'Delete Tutorials', description: 'Delete tutorials' },
+    { code: '*', resource: 'all', action: 'all', title: 'Super Admin', description: 'All permissions (super admin only)' },
+  ];
+
+  const permIdMap: Record<string, string> = {};
+  for (const p of defaultPermissions) {
+    const id = getUuid();
+    await db().insert(permission).values({ id, ...p });
+    permIdMap[p.code] = id;
+  }
+
+  const roleDefs = [
+    { name: 'super_admin', title: 'Super Admin', description: 'Full system access', status: 'active', sort: 1, perms: ['*'] },
+    { name: 'admin', title: 'Admin', description: 'Administrator', status: 'active', sort: 2, perms: Object.keys(permIdMap).filter(c => c.startsWith('admin.')) },
+    { name: 'editor', title: 'Editor', description: 'Content editor', status: 'active', sort: 3, perms: ['admin.access', 'admin.posts.read', 'admin.posts.write', 'admin.categories.read', 'admin.categories.write', 'admin.tutorials.read', 'admin.tutorials.write'] },
+    { name: 'viewer', title: 'Viewer', description: 'Read-only access', status: 'active', sort: 4, perms: ['admin.access', 'admin.users.read', 'admin.posts.read', 'admin.categories.read', 'admin.payments.read', 'admin.subscriptions.read', 'admin.credits.read'] },
+  ];
+
+  for (const rd of roleDefs) {
+    const roleId = getUuid();
+    await createRole({ id: roleId, name: rd.name, title: rd.title, description: rd.description, status: rd.status, sort: rd.sort });
+    for (const pc of rd.perms) {
+      const pid = permIdMap[pc];
+      if (pid) {
+        await db().insert(rolePermission).values({ id: getUuid(), roleId, permissionId: pid });
+      }
+    }
+  }
+
+  console.log('[RBAC] seeded: 4 roles, ' + defaultPermissions.length + ' permissions');
+}
+
+/**
+ * 若 ADMIN_EMAIL 环境变量匹配当前用户邮箱，自动授予 super_admin 角色。
+ * RBAC 表为空时会自动初始化。
+ */
+export async function autoGrantSuperAdmin(user: User) {
+  try {
+    const { envConfigs } = await import('@/config');
+    const adminEmail = envConfigs.admin_email?.trim().toLowerCase();
+    if (!adminEmail || adminEmail !== user.email?.toLowerCase()) {
+      return;
+    }
+
+    await ensureRbacSeeded();
+
+    const superAdminRole = await getRoleByName(ROLES.SUPER_ADMIN);
+    if (!superAdminRole) {
+      console.error('[RBAC] super_admin role not found even after seeding');
+      return;
+    }
+
+    const alreadyHas = await hasRole(user.id, ROLES.SUPER_ADMIN);
+    if (alreadyHas) {
+      return;
+    }
+
+    await assignRoleToUser(user.id, superAdminRole.id);
+    console.log(`[RBAC] auto-granted super_admin to ${user.email}`);
+  } catch (e) {
+    console.error('[RBAC] auto-grant super_admin failed', e);
+  }
+}
+
 export async function grantRoleForNewUser(user: User) {
   try {
     // get configs from db
