@@ -6,7 +6,7 @@ import { getTutorialByPath, listTutorialDocs } from '@/shared/models/tutorial';
 
 import { TutorialArticle } from '../tutorial-article';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 /**
  * 动态教程页：slug 为 slugPath 以 / 分段。

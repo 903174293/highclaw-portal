@@ -25,7 +25,7 @@
 .turbo/
 dist/
 *.tgz
-*.tar.gz
+# *.tar.gz
 
 # misc
 .DS_Store
