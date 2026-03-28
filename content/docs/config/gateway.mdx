@@ -1,0 +1,48 @@
+---
+title: Gateway
+description: "HTTP gateway — port, bind mode, authentication, and Tailscale integration."
+---
+
+## Basic
+
+```yaml
+gateway:
+  port: 18790           # listening port
+  bind: "loopback"      # "loopback" (127.0.0.1) | "all" (0.0.0.0)
+  mode: "local"         # "local" | "remote"
+```
+
+> **Security:** Use `bind: "loopback"` unless you have a tunnel configured. Binding to `0.0.0.0` without authentication exposes the gateway.
+
+## Authentication
+
+```yaml
+gateway:
+  auth:
+    mode: "token"       # "token" | "password" | "none"
+    token: ""
+    password: ""
+    allowTailscale: false
+```
+
+| Mode | Behavior |
+|---|---|
+| `token` | Generate pairing code at startup → exchange via `/pair` for Bearer token (recommended) |
+| `password` | Fixed password |
+| `none` | No auth (not recommended) |
+
+Set `allowTailscale: true` to skip auth for requests from within your Tailscale network.
+
+## Tailscale Serve / Funnel
+
+```yaml
+gateway:
+  tailscale:
+    mode: "off"          # "off" | "serve" | "funnel"
+    resetOnExit: false   # reset Tailscale config on exit
+```
+
+| Mode | Behavior |
+|---|---|
+| `serve` | Expose gateway to your Tailscale network |
+| `funnel` | Expose gateway publicly via Tailscale Funnel |

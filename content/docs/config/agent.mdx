@@ -1,0 +1,120 @@
+---
+title: Agent
+description: "Core agent settings — model, workspace, streaming mode, runtime limits, and provider keys."
+---
+
+## Minimal example
+
+```yaml
+agent:
+  model: "anthropic/claude-sonnet-4"
+  workspace: ""
+  streaming: "full"
+```
+
+## Full reference
+
+### `agent.model`
+
+Default model in `provider/model` format.
+
+```yaml
+agent:
+  model: "openrouter/anthropic/claude-sonnet-4"
+  # model: "anthropic/claude-opus-4-6"
+  # model: "ollama/llama3"
+```
+
+### `agent.workspace`
+
+Agent sandbox root directory. `file_read` / `file_write` are confined here.
+
+Default: `~/.highclaw/workspace`
+
+### `agent.streaming`
+
+Model communication mode (pick one):
+
+| Value | Behavior |
+|---|---|
+| `sync` | Wait for full response, then return. Most stable. |
+| `half` | SSE streaming for text (typewriter effect), agent loop unchanged. |
+| `full` | SSE-driven agent loop — tools execute inline. Best UX. |
+
+**Recommendation:** `sync` for production, `half` for interactive terminals, `full` for best experience.
+
+### `agent.runtime`
+
+```yaml
+agent:
+  runtime:
+    maxToolIterations: 50      # max tool-call rounds per task (prevents loops)
+    maxHistoryMessages: 50     # history cap before compaction kicks in
+    compactionKeepRecent: 20   # messages kept after compaction
+```
+
+### `agent.defaults`
+
+```yaml
+agent:
+  defaults:
+    thinkingLevel: ""          # "" | "low" | "medium" | "high"
+    verboseLevel: ""           # "" | "minimal" | "normal" | "verbose"
+```
+
+### `agent.sandbox`
+
+Docker-based isolation (not the command allowlist — see [Autonomy](/docs/config/autonomy)).
+
+```yaml
+agent:
+  sandbox:
+    mode: "off"     # "off" | "non-main" | "all"
+    allow: []       # tools allowed inside sandbox
+    deny: []        # tools denied inside sandbox
+```
+
+### `agent.models.allowed`
+
+Restrict which models can be used. Empty list = no restriction.
+
+```yaml
+agent:
+  models:
+    allowed: []
+```
+
+### `agent.providers`
+
+HighClaw supports 22+ providers. Each provider needs an `apiKey` and optionally a `baseUrl`.
+
+```yaml
+agent:
+  providers:
+    # OpenRouter (recommended — aggregates many models)
+    openrouter:
+      apiKey: "sk-or-v1-..."
+      baseUrl: ""
+
+    # Anthropic direct
+    anthropic:
+      apiKey: "sk-ant-..."
+      baseUrl: ""
+
+    # OpenAI direct
+    openai:
+      apiKey: "sk-..."
+      baseUrl: ""
+
+    # Ollama (local)
+    ollama:
+      apiKey: ""
+      baseUrl: "http://localhost:11434"
+
+    # Any OpenAI-compatible API
+    custom:
+      apiKey: "your-key"
+      baseUrl: "https://your-api.com/v1"
+```
+
+Other supported providers include: `groq`, `mistral`, `xai`, `deepseek`, `together`, `fireworks`, `perplexity`, `cohere`, `bedrock`, `google`, `venice`, and `custom:https://...`.

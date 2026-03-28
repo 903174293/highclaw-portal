@@ -1,57 +1,345 @@
 ---
 title: Security
-description: Gateway exposure, pairing, workspace scope, and allowlists.
+description: "Multi-layer security model — autonomy levels, workspace sandbox, command risk classification, gateway auth, and channel allowlists."
 ---
 
-## Checklist (summary)
+Field-level reference: [Autonomy](/docs/config/autonomy) · [Gateway](/docs/config/gateway).
 
-| # | Item | How |
-| --- | --- | --- |
-| 1 | Gateway not public by default | Binds `127.0.0.1`; `0.0.0.0` blocked without tunnel or explicit allow |
-| 2 | Pairing | 6-digit code; `POST /pair` → bearer token; `/webhook` requires `Authorization` |
-| 3 | Filesystem scope | `workspace_only` default; blocked paths; symlink escape checks |
-| 4 | Tunnel | Public bind requires active tunnel (Tailscale, Cloudflare, ngrok, custom) |
+## Security model overview
 
-## Sandbox (`workspaceOnly`)
+HighClaw implements a **defense-in-depth** security architecture with four independent layers:
 
-Default: operations stay under the workspace (`~/.highclaw/workspace`).
-
-```bash
-highclaw config get autonomy.workspaceOnly
-highclaw config set autonomy.workspaceOnly false   # allow absolute paths (use with care)
-highclaw agent -m "..." --no-sandbox              # one-shot override
 ```
+┌─────────────────────────────────────────────────────────────┐
+│  Layer 4: Channel allowlists                                │
+│  Who can talk to the agent?                                 │
+├─────────────────────────────────────────────────────────────┤
+│  Layer 3: Gateway auth (pairing / token / password)         │
+│  Who can access the HTTP API?                               │
+├─────────────────────────────────────────────────────────────┤
+│  Layer 2: Command risk classification                       │
+│  Which commands are allowed, and at what risk level?        │
+├─────────────────────────────────────────────────────────────┤
+│  Layer 1: Workspace sandbox (workspaceOnly + forbiddenPaths)│
+│  Where can the agent read/write files?                      │
+└─────────────────────────────────────────────────────────────┘
+```
+
+Each layer is independent — disabling one does not bypass the others.
+
+---
+
+## Layer 1: Workspace sandbox
+
+The most fundamental boundary. All file operations (`file_read`, `file_write`, shell commands) are confined to the workspace directory.
 
 ```yaml
 autonomy:
-  level: supervised
-  workspaceOnly: true
-  allowedCommands: [git, go, make, ls, cat, grep]
-  forbiddenPaths: [/etc, /root]
+  workspaceOnly: true    # DEFAULT — all operations restricted to workspace
 ```
 
-**Risky shell commands:** model may need to pass `"approved": true` in tool calls (self-approval pattern, same idea as ZeroClaw).
+| Setting | Scope |
+|---|---|
+| `workspaceOnly: true` | Only `~/.highclaw/workspace/` — the **safest** option |
+| `workspaceOnly: false` | Absolute paths allowed (e.g., `~/Desktop`), but `forbiddenPaths` still enforced |
 
-## Channel allowlists
+### System-default forbidden paths
 
-- **Empty allowlist** → deny inbound
-- **`"*"`** → allow all (explicit)
-- Otherwise → exact match list
+These are **always blocked**, even when `workspaceOnly: false`:
 
-Recommended: list your own Telegram username / numeric ID, Discord user id, Slack member id; use `"*"` only for short tests.
+```
+/etc  /root  /boot  /dev  /proc  /sys  /var/run
+~/.ssh  ~/.gnupg  ~/.aws  ~/.kube/config  ~/.config
+```
 
-Repair flow:
+### Additional forbidden paths
+
+`forbiddenPaths` is **additive** — extends the built-in list:
+
+```yaml
+autonomy:
+  forbiddenPaths:
+    - "~/.docker"
+    - "~/.npmrc"
+    - "~/.pypirc"
+    - "/var/lib/mysql"
+```
+
+### Symlink escape protection
+
+HighClaw checks symlink targets to prevent workspace escape — a symlink inside `~/.highclaw/workspace/` that points to `/etc/passwd` will be blocked.
+
+---
+
+## Layer 2: Command risk classification
+
+HighClaw uses a **deny-by-default** command execution model with three risk levels.
+
+### Autonomy levels
+
+```yaml
+autonomy:
+  level: "supervised"   # "readonly" | "supervised" | "full"
+```
+
+| Level | Command execution | File writes | Use case |
+|---|---|---|---|
+| `readonly` | Blocked | Blocked | Read-only browsing, research |
+| `supervised` | Allowed, but medium-risk needs `approved=true` | Allowed | **Default** — production, shared environments |
+| `full` | All allowlisted commands execute freely | Allowed | Developer sandbox, trusted environments |
+
+### Risk levels
+
+Every command is classified into one of three risk tiers:
+
+| Risk | Icon | Examples | `supervised` behavior | `full` behavior |
+|---|---|---|---|---|
+| Low | 🟢 | `ls`, `cat`, `grep`, `git status`, `python` | Execute freely | Execute freely |
+| Medium | 🟡 | `kill`, `pkill`, `systemctl`, `git push`, `npm publish` | Requires `approved=true` | Execute freely |
+| High | 🔴 | `rm`, `chmod`, `chown` | Blocked by `blockHighRiskCommands` | Blocked by `blockHighRiskCommands` |
+
+### Risk blocking controls
+
+```yaml
+autonomy:
+  blockHighRiskCommands: true            # block rm/chmod/chown even if allowlisted
+  requireApprovalForMediumRisk: true     # supervised: medium-risk needs approved=true
+```
+
+**Key design point:** `blockHighRiskCommands` is a **separate switch** from `level`. Even in `full` mode, high-risk commands are blocked unless you explicitly set `blockHighRiskCommands: false`.
+
+### Built-in command allowlist
+
+These commands are always available (no need to add to `allowedCommands`):
+
+```
+File:     ls cat grep find echo pwd wc head tail mkdir touch cp mv rm
+          chmod chown stat du df basename dirname realpath file tree
+Dev:      git npm cargo go python python3 pip pip3 node yarn pnpm make cmake
+Text:     sort uniq awk sed cut tr tee xargs less more
+Network:  curl wget ssh scp rsync dig nslookup ping traceroute
+Process:  ps top htop free uptime kill pkill nohup timeout
+Container: docker docker-compose nginx systemctl service
+Archive:  tar zip unzip gzip gunzip
+Other:    date which whoami uname env printenv cd watch yes
+```
+
+Note: `rm`, `chmod`, `chown` are in the built-in allowlist but gated by `blockHighRiskCommands`. `kill`, `pkill`, `systemctl` are in the list but classified as medium-risk.
+
+### Custom allowlist
+
+`allowedCommands` is **additive** — merged into the built-in list:
+
+```yaml
+autonomy:
+  allowedCommands:
+    - "java"
+    - "mvn"
+    - "sqlite3"
+    - "jq"
+    - "gh"
+    - "kubectl"
+```
+
+See the full categorized command list in [Autonomy reference](/docs/config/autonomy) or `config-default.yaml`.
+
+### Rate and cost limits
+
+```yaml
+autonomy:
+  maxActionsPerHour: 0         # 0 = unlimited
+  maxCostPerDayCents: 0        # 0 = unlimited (unit: US cents)
+```
+
+---
+
+## Layer 3: Gateway auth
+
+The HTTP gateway binds to `127.0.0.1` by default — not reachable from the network.
+
+```yaml
+gateway:
+  bind: "loopback"    # "loopback" (127.0.0.1) | "all" (0.0.0.0)
+  auth:
+    mode: "token"     # "token" | "password" | "none"
+```
+
+### Pairing flow (`mode: "token"`)
+
+1. HighClaw prints a **6-digit pairing code** at startup
+2. Client sends `POST /pair` with `X-Pairing-Code` header
+3. Server returns a **Bearer token**
+4. All subsequent API calls use `Authorization: Bearer <token>`
+
+This is the recommended auth mode — no fixed password, one-time pairing.
+
+### Tailscale integration
+
+```yaml
+gateway:
+  auth:
+    allowTailscale: false    # skip auth for Tailscale network traffic
+  tailscale:
+    mode: "off"              # "serve" (private) | "funnel" (public)
+```
+
+### Public exposure rules
+
+Binding to `0.0.0.0` requires one of:
+- An active tunnel (Cloudflare, Tailscale, ngrok, custom)
+- Explicit `bind: "all"` in config
+
+Without these, HighClaw refuses to start on `0.0.0.0`.
+
+---
+
+## Layer 4: Channel allowlists
+
+Every messaging channel has an independent allowlist:
+
+| Setting | Behavior |
+|---|---|
+| Empty list `[]` | **Deny all** inbound messages |
+| `["*"]` | Allow all (explicit opt-in) |
+| `["alice", "bob"]` | Exact match only |
+
+```yaml
+channels:
+  telegram:
+    allowFrom: ["my_username"]       # Telegram usernames (no @)
+    allowedUsers: [123456789]        # numeric user IDs (merged with allowFrom)
+  discord:
+    allowFrom: ["987654321"]         # Discord user IDs
+  feishu:
+    allowedUsers: ["ou_xxxx"]        # Feishu user open IDs
+    allowedChats: ["oc_yyyy"]        # group chat IDs
+  wecom:
+    allowedUsers: ["*"]              # allow all WeCom users
+    allowedDepartments: [1, 2]       # department IDs
+```
+
+**Recommendation:** Never use `"*"` in production. List specific user IDs / usernames.
+
+### Repair
 
 ```bash
 highclaw onboard --channels-only
 ```
 
-## WhatsApp (outline)
+---
 
-1. Meta Business app + WhatsApp product  
-2. Access token, phone number id, verify token  
-3. Configure `channels_config.whatsapp` in `config.yaml`  
-4. Run gateway behind **HTTPS** tunnel  
-5. Set Meta webhook to `https://<tunnel>/whatsapp`
+## Security profiles
 
-See upstream README for full YAML snippet.
+HighClaw ships two preset configurations. Use them as starting points:
+
+### `config-default.yaml` — Production (conservative)
+
+```yaml
+autonomy:
+  level: "supervised"
+  workspaceOnly: true
+  blockHighRiskCommands: true
+  requireApprovalForMediumRisk: true
+  maxActionsPerHour: 0
+  maxCostPerDayCents: 0
+  forbiddenPaths: []
+  allowedCommands: []        # built-in only
+```
+
+Design: **minimal permissions**, medium-risk requires approval, high-risk blocked.
+
+### `config-sandbox.yaml` — Developer sandbox (permissive)
+
+```yaml
+autonomy:
+  level: "full"
+  workspaceOnly: true        # still workspace-confined!
+  blockHighRiskCommands: false
+  requireApprovalForMediumRisk: false
+  maxActionsPerHour: 0
+  maxCostPerDayCents: 0
+  forbiddenPaths:
+    - "~/.docker"
+    - "~/.npmrc"
+    - "~/.pypirc"
+  allowedCommands:           # 200+ dev tools pre-allowed
+    - "java"
+    - "javac"
+    - "mvn"
+    - "gradle"
+    # ... (full list in config-sandbox.yaml)
+```
+
+Design: **free inside sandbox** — `rm`, `chmod` allowed within workspace. 200+ developer tools (languages, build systems, local AI models, DB clients, editors) pre-allowed. But `workspaceOnly: true` still prevents any access outside `~/.highclaw/workspace/`.
+
+Key differences:
+
+| Setting | `config-default.yaml` | `config-sandbox.yaml` |
+|---|---|---|
+| `level` | `supervised` | `full` |
+| `blockHighRiskCommands` | `true` | `false` |
+| `requireApprovalForMediumRisk` | `true` | `false` |
+| `allowedCommands` | empty (built-in only) | 200+ dev tools |
+| `streaming` | `full` | `half` (better for terminal) |
+| `maxToolIterations` | 50 | 200 |
+| `forbiddenPaths` | empty | `~/.docker`, `~/.npmrc`, `~/.pypirc` |
+| `workspaceOnly` | `true` | `true` (same!) |
+
+The sandbox config adds **extra `forbiddenPaths`** as defense — even if `workspaceOnly` were ever flipped to `false`, Docker credentials and package registry tokens remain protected.
+
+### When to use which
+
+| Scenario | Profile |
+|---|---|
+| Production server, shared environment | `config-default.yaml` |
+| Remote developer sandbox | `config-sandbox.yaml` |
+| CI/CD agent | `config-default.yaml` + custom `allowedCommands` |
+| Local personal use | Either — depends on trust level |
+
+---
+
+## Sandbox allowlist categories
+
+The `config-sandbox.yaml` pre-allows commands in these categories:
+
+| Category | Examples |
+|---|---|
+| Programming languages | `java`, `javac`, `mvn`, `gradle`, `ruby`, `rustc`, `swift`, `deno`, `bun`, `tsc` |
+| Local AI models | `ollama`, `llama`, `llamafile`, `mlx`, `whisper`, `stable-diffusion`, `vllm` |
+| AI coding assistants | `claude`, `gemini`, `opencode`, `aider`, `copilot`, `cursor`, `cody`, `codex`, `sgpt` |
+| Package managers | `brew`, `apt`, `conda`, `poetry`, `uv`, `pipx`, `pdm` |
+| Container & IaC | `podman`, `kubectl`, `helm`, `terraform`, `ansible`, `vagrant` |
+| Database clients | `mysql`, `psql`, `sqlite3`, `mongosh`, `redis-cli`, `etcdctl` |
+| Text & data | `jq`, `yq`, `pandoc`, `openssl`, `gpg`, `diff`, `patch` |
+| Version control | `gh`, `glab`, `svn`, `hg` |
+| Network | `aria2c`, `httpie`, `nmap`, `mtr`, `whois` |
+| System monitoring | `vmstat`, `iostat`, `strace`, `perf`, `dmesg`, `sysctl` |
+| Editors & terminal | `vim`, `nano`, `tmux`, `screen`, `bat`, `rg`, `fd`, `fzf` |
+| Media & docs | `ffmpeg`, `magick`, `plantuml`, `dot` |
+| Frontend & test | `vite`, `webpack`, `esbuild`, `playwright`, `cypress`, `jest`, `vitest`, `pytest` |
+| Scheduling | `crontab`, `at` |
+
+---
+
+## Quick checklist
+
+| # | Item | Default | Config key |
+|---|---|---|---|
+| 1 | Workspace confinement | `true` | `autonomy.workspaceOnly` |
+| 2 | High-risk command blocking | `true` | `autonomy.blockHighRiskCommands` |
+| 3 | Medium-risk approval | `true` | `autonomy.requireApprovalForMediumRisk` |
+| 4 | Gateway binds loopback only | `true` | `gateway.bind: "loopback"` |
+| 5 | Gateway auth enabled | `true` | `gateway.auth.mode: "token"` |
+| 6 | Channel allowlists not `"*"` | `[]` (deny all) | `channels.<x>.allowFrom` |
+| 7 | Secrets encrypted | `true` | `secrets.encrypt` |
+| 8 | Symlink escape protection | Always on | N/A |
+| 9 | System paths always blocked | Always on | N/A |
+
+## CLI commands
+
+```bash
+highclaw config get autonomy.level
+highclaw config set autonomy.workspaceOnly false   # allow absolute paths (use with care)
+highclaw agent -m "..." --no-sandbox               # one-shot override
+highclaw onboard --channels-only                   # repair channel allowlists
+```

@@ -11,6 +11,24 @@
       "priority": true,
       "statusCode": 308,
       "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    },
+    {
+      "source": "/docs/configuration",
+      "destination": "/docs/config",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/docs/configuration(?:/)?$"
+    },
+    {
+      "source": "/en/docs/configuration",
+      "destination": "/en/docs/config",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/en/docs/configuration(?:/)?$"
+    },
+    {
+      "source": "/zh/docs/configuration",
+      "destination": "/zh/docs/config",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/zh/docs/configuration(?:/)?$"
     }
   ],
   "headers": [

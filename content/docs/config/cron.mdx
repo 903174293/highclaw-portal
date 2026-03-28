@@ -1,0 +1,131 @@
+---
+title: Cron & Heartbeat
+description: "Scheduled tasks, heartbeat system, systemEvent vs agentTurn, and delivery configuration."
+---
+
+## Cron (scheduled tasks)
+
+```yaml
+cron:
+  enabled: true
+  store: ""                     # default: ~/.highclaw/state/cron-jobs.json
+  maxConcurrentRuns: 4
+  sessionRetention: "24h"       # auto-cleanup of cron run sessions
+```
+
+### Schedule modes
+
+| Mode | Format | Example |
+|---|---|---|
+| `at` | ISO-8601 / ms timestamp | `"2025-12-31T09:00:00Z"` |
+| `every` | Duration | `"5m"`, `"1h"`, `"30s"` |
+| `cron` | Standard cron expression (5/6 fields) | `"0 9 * * *"` |
+
+### Task types
+
+| Type | Execution | Depends on heartbeat | Best for |
+|---|---|---|---|
+| `systemEvent` | Injected into heartbeat queue → consumed on next tick | Yes | Lightweight reminders |
+| `agentTurn` | Creates isolated session, executes independently | No | Heavy tasks with tool calls |
+
+### Creating tasks
+
+**Via chat (recommended):**
+
+```
+"Remind me to take a break every 5 minutes"   → systemEvent
+"Push tech news summary every day at 9am"       → agentTurn
+```
+
+Agent auto-infers `agentId` and `delivery` from the current conversation.
+
+**Via HTTP API:**
+
+```bash
+# systemEvent example
+curl http://localhost:18790/api/internal/cron/add -X POST \
+  -H "Content-Type: application/json" -d '{
+    "name": "Eye break reminder",
+    "schedule": { "every": "5m" },
+    "payload": { "kind": "systemEvent", "text": "Remind the user to look away for 1 minute" }
+  }'
+
+# agentTurn example
+curl http://localhost:18790/api/internal/cron/add -X POST \
+  -H "Content-Type: application/json" -d '{
+    "name": "Daily tech news",
+    "schedule": { "cron": "0 9 * * *" },
+    "payload": {
+      "kind": "agentTurn",
+      "text": "Search x.com for latest tech news and summarize"
+    },
+    "delivery": {
+      "mode": "announce",
+      "channel": "feishu",
+      "to": "ou_xxxxxxxxxxxx",
+      "bestEffort": true
+    }
+  }'
+```
+
+### Delivery (agentTurn results)
+
+```yaml
+delivery:
+  mode: "announce"       # "announce" | "none"
+  channel: "feishu"      # target channel
+  to: "ou_xxx"           # recipient ID
+  bestEffort: true       # don't fail task if delivery fails
+```
+
+### Error handling
+
+- Stepped backoff: 30s → 1m → 5m → 15m → 60m
+- Auto-disable after 3 consecutive schedule errors
+- Stale `runningAtMs` (> 2h) auto-cleared
+
+---
+
+## Heartbeat
+
+Heartbeat is the core mechanism for HighClaw's autonomous task execution. It periodically wakes the agent, runs the task defined in `HEARTBEAT.md`, and delivers results.
+
+### Configuration
+
+Global defaults (in `agents.defaults`):
+
+```yaml
+agents:
+  defaults:
+    heartbeat:
+      every: "30m"                  # interval (Go duration: 30s, 5m, 1h)
+      model: ""                     # dedicated model (empty = inherit agent default)
+      session: "main"               # session key
+      target: "last"                # "last" (most recent active channel) | "none" | channel name
+      to: ""                        # recipient ID
+      accountId: ""                 # for multi-bot: specify feishu/wecom accountId
+      prompt: ""                    # empty = read HEARTBEAT.md
+      ackMaxChars: 300
+      includeReasoning: false
+      showOk: false                 # deliver even when result is HEARTBEAT_OK
+      showAlerts: true              # deliver non-OK results
+      useIndicator: false
+      activeHours:
+        start: "09:00"
+        end: "22:00"
+        timezone: "Asia/Shanghai"
+```
+
+### Delivery target resolution (when `target: "last"`)
+
+1. Explicit `target` + `to` + `accountId` in heartbeat config
+2. Infer from current session's most recent active channel
+3. Infer from `agents.bindings` (agent's bound channel + accountId)
+4. Fall back to top-level feishu bot (if `channels.feishu` configured)
+5. Error: "channel not found"
+
+### SystemEvent queue
+
+- Capacity: max 20 events per session
+- Auto-dedup: identical text won't be queued twice
+- Cron `systemEvent` tasks inject into this queue → consumed by heartbeat

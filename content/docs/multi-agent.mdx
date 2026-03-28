@@ -23,3 +23,155 @@ In the upstream repo, see:
 - `docs/heartbeat-guide.md`
 
 ![Architecture](https://raw.githubusercontent.com/903174293/highclaw/main/images/architecture.svg)
+
+---
+
+## `agents` in `config.yaml`
+
+未配置 `agents` 时走单 Agent 模式（使用顶层 `agent.*`）。配置本节后启用多 Agent：团队定义、路由绑定、Agent 间通信。
+
+### Global defaults
+
+子 Agent 继承以下默认值，可按 Agent 覆盖：
+
+```yaml
+agents:
+  defaults:
+    model: "anthropic/claude-sonnet-4-20250514"
+    workspace: ""
+    streaming: "full"
+    maxToolIterations: 50
+    thinkingLevel: ""
+```
+
+### Agent list
+
+```yaml
+agents:
+  list:
+    - id: coder
+      model: "anthropic/claude-sonnet-4-20250514"
+      systemPrompt: "You are a senior programmer focused on writing code"
+      tools: [shell, bash, file_write, file_read, web_search]
+      workspace: "~/.highclaw/workspace/coder"
+      identity:
+        name: "Coder"
+        emoji: "👨‍💻"
+
+    - id: researcher
+      model: "openai/gpt-4.1"
+      systemPrompt: "You are a researcher focused on information search and analysis"
+      tools: [web_search, web_fetch, memory_store, memory_recall]
+      identity:
+        name: "Researcher"
+        emoji: "🔍"
+```
+
+### Message routing (`bindings`)
+
+```yaml
+agents:
+  bindings:
+    - agentId: coder
+      match:
+        channel: feishu
+        accountId: dev-bot
+    - agentId: researcher
+      match:
+        channel: telegram
+        peer:
+          kind: direct
+```
+
+### Memory search
+
+全局默认记忆搜索配置（语义检索历史对话与记忆条目）：
+
+```yaml
+agents:
+  defaults:
+    memorySearch:
+      enabled: true
+      sources: ["memory", "sessions"]   # 搜索源：memory 条目 + 历史会话
+      provider: "openai"                # 嵌入 provider
+      model: "text-embedding-3-small"   # 嵌入模型
+      maxResults: 10
+      minScore: 0.3                     # 最低相似度阈值
+```
+
+### Sub-agents
+
+```yaml
+agents:
+  defaults:
+    subagents:
+      allowAgents: ["*"]
+      maxConcurrent: 8
+      archiveAfterMinutes: 60
+      thinking: ""
+      denyTools: []
+      announce:
+        mode: "followup"
+        cap: 20
+        debounceMs: 1000
+        dropPolicy: "oldest"
+```
+
+Per-agent override:
+
+```yaml
+agents:
+  list:
+    - id: coder
+      subagents:
+        allowAgents: ["researcher"]
+        maxConcurrent: 4
+        announce:
+          mode: "steer-backlog"
+```
+
+`announce.mode`: `followup` | `collect` | `direct` | `steer` | `steer-backlog` | `interrupt`。
+
+### Group chat
+
+```yaml
+agents:
+  list:
+    - id: coder
+      groupChat:
+        requireMention: true
+        activation: "mention"
+        mentionPatterns: ["@coder", "@bot"]
+        historyLimit: 20
+        broadcastGroups: []
+        gating:
+          allowGroups: []
+          denyGroups: []
+        toolsBySender:
+          "admin-user-id":
+            allow: ["shell", "file_write"]
+          "guest-user-id":
+            deny: ["shell"]
+```
+
+### Heartbeat (per-agent)
+
+与定时任务、心跳投递的关系见 [Cron & heartbeat](/docs/config/cron)。单 Agent 覆盖示例：
+
+```yaml
+agents:
+  list:
+    - id: coder
+      heartbeat:
+        every: "1h"
+        target: "telegram"
+```
+
+### Agent-to-agent
+
+```yaml
+agents:
+  agentToAgent:
+    enabled: true
+    timeoutSeconds: 120
+```

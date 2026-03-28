@@ -74,6 +74,41 @@ session:
       - whatsapp:+1234567890
 ```
 
+### Full `session` reference
+
+**Scope** — `per-sender`（每发送者独立，推荐）或 `global`（全员共享一会话）。
+
+**History** — `historyLimit`：每次请求发给模型的最近消息条数（L1 活动窗口）。默认约 32；过小易「失忆」，过大耗 token。
+
+**Identity links** — 跨渠道合并同一用户（字符串键与列表项均可带引号）：
+
+```yaml
+session:
+  identityLinks:
+    "user-alice":
+      - "telegram:12345678"
+      - "discord:987654321"
+```
+
+**Workspace isolation** — `isolation`: `shared`（共享 workspace）、`agent`（`~/.highclaw/workspace/agents/{agentId}/`）、`session`（按会话哈希隔离）。`cleanupAfterDays` 清理过期会话 workspace。
+
+**Three-layer memory**（防上下文丢失）：
+
+- **L1**：最近 `historyLimit` 条原文进模型
+- **L2**：结构化要点（本地规则，无 LLM、无 token）
+- **L3**：L2 超预算时 LLM 压缩摘要（很少触发）
+
+```yaml
+session:
+  memory:
+    enabled: false
+    notesMaxTokens: 2000
+    compactionModel: ""
+    compactionReserveTokens: 20000
+```
+
+长对话可设 `enabled: true`；L2 无 API 费用，L3 通常在数百轮后才触发。
+
 ## TUI keys
 
 | Key | Action |

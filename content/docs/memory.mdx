@@ -51,6 +51,22 @@ memory:
   chunkMaxTokens: 512
 ```
 
+### Field reference
+
+| Key | Values / notes |
+| --- | --- |
+| `backend` | `sqlite`（默认）、`markdown`、`none` |
+| `autoSave` | 是否自动持久化对话记忆 |
+| `hygieneEnabled` | 是否启用归档/清理 |
+| `archiveAfterDays` | N 天后归档到冷存储 |
+| `purgeAfterDays` | N 天后删除 |
+| `conversationRetentionDays` | 会话记忆保留天数 |
+| `embeddingProvider` | `openai` 启用向量语义检索；`none` 仅关键词（需在 `agent.providers.openai` 配好 Key） |
+| `embeddingModel` / `embeddingDimensions` | 嵌入模型与维度 |
+| `vectorWeight` / `keywordWeight` | 混合检索中向量与关键词权重 |
+| `embeddingCacheSize` | SQLite 中嵌入 LRU 缓存条数 |
+| `chunkMaxTokens` | 分块最大 token 数 |
+
 ## CLI examples
 
 ```bash

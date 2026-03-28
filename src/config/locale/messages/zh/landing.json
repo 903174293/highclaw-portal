@@ -70,8 +70,8 @@
       ]
     },
     "show_sign": true,
-    "show_theme": true,
-    "show_locale": true
+    "show_theme": false,
+    "show_locale": false
   },
   "footer": {
     "id": "footer",
@@ -165,8 +165,8 @@
         }
       ]
     },
-    "show_theme": true,
-    "show_locale": true
+    "show_theme": false,
+    "show_locale": false
   },
   "tutorials_layout": {
     "nav_title": "教程目录",

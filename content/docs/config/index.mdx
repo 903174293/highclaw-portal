@@ -1,0 +1,45 @@
+---
+title: Configuration Overview
+description: "All settings live in ~/.highclaw/config.yaml — copy config-default.yaml and customize."
+---
+
+HighClaw reads `~/.highclaw/config.yaml` at startup. Run `highclaw onboard` to generate a starter config, or copy the full template:
+
+```bash
+cp config-default.yaml ~/.highclaw/config.yaml
+```
+
+## Environment variable overrides
+
+Environment variables take **higher** priority than file values:
+
+| Variable | Overrides |
+|---|---|
+| `HIGHCLAW_CONFIG` | Config file path |
+| `TELEGRAM_BOT_TOKEN` | `channels.telegram.botToken` |
+| `DISCORD_BOT_TOKEN` | `channels.discord.token` |
+| `SLACK_BOT_TOKEN` | `channels.slack.botToken` |
+| `SLACK_APP_TOKEN` | `channels.slack.appToken` |
+| `ANTHROPIC_API_KEY` | `agent.providers.anthropic.apiKey` |
+| `OPENAI_API_KEY` | `agent.providers.openai.apiKey` |
+
+## Sections
+
+| Section | Key | Description |
+|---|---|---|
+| [Agent](/docs/config/agent) | `agent` | Model, workspace, streaming, runtime limits, providers |
+| [Autonomy](/docs/config/autonomy) | `autonomy` | Permission level, command allowlist, risk blocking |
+| [Memory](/docs/memory) | `memory` | Implementation guide + `memory.*` field reference (single page) |
+| [Sessions](/docs/sessions) | `session` | Session store, CLI, `session.*`, L1/L2/L3 memory (single page) |
+| [Multi-agent](/docs/multi-agent) | `agents` | Runtime overview + `agents` YAML reference (single page) |
+| [Gateway](/docs/config/gateway) | `gateway` | Port, bind mode, auth, Tailscale integration |
+| [Channels](/docs/config/channels) | `channels` | Telegram, Discord, Slack, WhatsApp, Feishu, WeChat Work, etc. |
+| [Reliability](/docs/config/reliability) | `reliability` / `modelRoutes` | Retry, fallback chain, hint routing |
+| [Tunnel](/docs/config/tunnel) | `tunnel` | Cloudflare, Tailscale, ngrok, custom |
+| [Cron](/docs/config/cron) | `cron` | Scheduled tasks, systemEvent vs agentTurn |
+| [Other](/docs/config/other) | `skills` / `browser` / `hooks` / `log` / `auth` / ... | Remaining settings |
+
+## Related docs
+
+- [Gateway API](/docs/gateway-api) — HTTP endpoints (`/health`, `/pair`, webhooks), not YAML.
+- [Identity](/docs/identity) — `IDENTITY.md` / AIEOS; overlaps with [Other → Identity](/docs/config/other#identity).

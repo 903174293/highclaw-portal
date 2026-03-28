@@ -71,14 +71,9 @@ echo ">>> rsync -a public/"
 rsync -a "$ROOT/public/" "$PKG_DIR/public/"
 
 # ---------- downloads/ ----------
-# 预编译安装包目录；若存在且非空则原样打入（保留子目录结构如 release/）
-if [[ -d "$ROOT/downloads" ]] && [[ -n "$(ls -A "$ROOT/downloads/" 2>/dev/null)" ]]; then
-  echo ">>> rsync -a downloads/"
-  rsync -a "$ROOT/downloads/" "$PKG_DIR/downloads/"
-else
-  echo ">>> WARN: downloads/ 不存在或为空，跳过（部署后可手动放置安装包）"
-  mkdir -p "$PKG_DIR/downloads"
-fi
+# 只创建空目录结构，不打入安装包文件（太大）。部署后手动拷入。
+mkdir -p "$PKG_DIR/downloads/release"
+echo ">>> OK: downloads/release/ 目录已创建（空），部署后请手动放入安装包"
 
 # ---------- data/ ----------
 # SQLite 数据库文件需要带上表结构；若本地有 .db 文件则 dump schema 建空库

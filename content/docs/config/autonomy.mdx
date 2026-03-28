@@ -1,0 +1,97 @@
+---
+title: Autonomy
+description: "Permission levels, command allowlists, risk classification, and path restrictions."
+---
+
+Autonomy controls **what the agent is allowed to do** — command execution, file access, and cost limits.
+
+## Level
+
+```yaml
+autonomy:
+  level: "supervised"   # "readonly" | "supervised" | "full"
+```
+
+| Level | Behavior |
+|---|---|
+| `readonly` | No command execution, no file writes |
+| `supervised` | Medium-risk commands require `approved=true` confirmation |
+| `full` | Allowlisted commands execute freely |
+
+## Workspace and path restrictions
+
+```yaml
+autonomy:
+  workspaceOnly: true          # true = confine to workspace dir (safest)
+  forbiddenPaths: []           # additional paths to block
+```
+
+System-default forbidden paths (always blocked): `/etc`, `/root`, `/boot`, `/dev`, `/proc`, `/sys`, `/var/run`, `~/.ssh`, `~/.gnupg`, `~/.aws`, `~/.kube/config`, `~/.config`.
+
+`forbiddenPaths` is **additive** — it extends the built-in list.
+
+```yaml
+autonomy:
+  forbiddenPaths:
+    - "~/.docker"
+    - "/var/lib/mysql"
+    - "~/.npmrc"
+```
+
+## Risk blocking
+
+```yaml
+autonomy:
+  blockHighRiskCommands: true            # block high-risk even if allowlisted
+  requireApprovalForMediumRisk: true     # supervised mode: medium-risk needs approved=true
+```
+
+### Risk levels
+
+| Level | Examples | Behavior |
+|---|---|---|
+| 🟢 Low | `ls`, `cat`, `grep`, `git status` | Always allowed if in allowlist |
+| 🟡 Medium | `kill`, `systemctl`, `git push` | `supervised` mode requires approval |
+| 🔴 High | `rm`, `chmod`, `chown` | Blocked when `blockHighRiskCommands: true` |
+
+## Rate and cost limits
+
+```yaml
+autonomy:
+  maxActionsPerHour: 0         # 0 = unlimited
+  maxCostPerDayCents: 0        # 0 = unlimited (unit: US cents)
+```
+
+## Command allowlist
+
+HighClaw uses **deny-by-default**. Only allowlisted commands can execute.
+
+**Built-in allowlist** (always available, no need to add):
+
+```
+ls cat grep find echo pwd wc head tail mkdir touch cp mv rm
+chmod chown stat git npm cargo go python python3 pip pip3
+node yarn pnpm make cmake sort uniq awk sed cut tr tee xargs
+date which whoami uname env printenv ps top htop free uptime
+lscpu id kill pkill killall nohup timeout systemctl service
+nginx docker docker-compose supervisorctl pm2 journalctl
+lsof ss netstat dig nslookup ping traceroute ip tar zip unzip
+gzip gunzip curl wget ssh scp rsync cd basename dirname
+realpath du df less more file tree watch yes
+```
+
+`allowedCommands` is **additive** — merged into the built-in list:
+
+```yaml
+autonomy:
+  allowedCommands:
+    - "java"
+    - "mvn"
+    - "sqlite3"
+    - "jq"
+    - "gh"
+    - "kubectl"
+    - "helm"
+```
+
+See `config-default.yaml` for the full categorized command list with risk annotations.

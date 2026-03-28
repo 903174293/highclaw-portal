@@ -240,6 +240,21 @@ else
   log "PM2: skip stop (SKIP_PM2=1 or pm2 not installed)"
 fi
 
+# ---------- 保护持久数据：在移走旧目录前先把 data/ 和 downloads/ 提取到安全位置 ----------
+PERSIST_TMP=""
+if [[ "$MODE" == "update" ]] && [[ -d "$TARGET_DIR" ]]; then
+  PERSIST_TMP="${TARGET_DIR}.persist.$$"
+  mkdir -p "$PERSIST_TMP"
+  if [[ -d "$TARGET_DIR/data" ]]; then
+    log "Saving data/ before backup..."
+    cp -a "$TARGET_DIR/data" "$PERSIST_TMP/data"
+  fi
+  if [[ -d "$TARGET_DIR/downloads" ]] && [[ -n "$(ls -A "$TARGET_DIR/downloads/" 2>/dev/null)" ]]; then
+    log "Saving downloads/ before backup..."
+    cp -a "$TARGET_DIR/downloads" "$PERSIST_TMP/downloads"
+  fi
+fi
+
 if [[ -d "$TARGET_DIR" ]]; then
   bak="${TARGET_DIR}.bak.$(date +%Y%m%d%H%M%S)"
   log "Backing up current release -> $bak"
@@ -257,51 +272,57 @@ if [[ ! -f "$TARGET_DIR/server.js" ]]; then
   exit 1
 fi
 log "OK: extracted server.js present"
-# standalone 包已含运行所需 node_modules，不在服务器执行 pnpm/npm install
 
-# 确保 data/ 和 downloads/ 目录存在（SQLite 数据库 + 安装包）
+# 确保 data/ 和 downloads/ 目录存在
 mkdir -p "$TARGET_DIR/data" "$TARGET_DIR/downloads"
 log "OK: data/ and downloads/ directories ensured"
 
-# 更新部署保留旧版 data/ 数据（数据库文件不应丢失）
-if [[ "$MODE" == "update" ]]; then
-  bak_latest="$(ls -td "${TARGET_DIR}.bak."* 2>/dev/null | head -1)"
-  if [[ -n "$bak_latest" ]] && [[ -d "$bak_latest/data" ]]; then
-    if ls "$bak_latest/data/"*.db 1>/dev/null 2>&1; then
-      log "Restoring data/*.db from backup: $bak_latest/data/"
-      # 先保留新包的 db 副本（含最新 RBAC 种子数据）
-      for newdb in "$TARGET_DIR/data/"*.db; do
-        [ -f "$newdb" ] && cp "$newdb" "${newdb}.seed" 2>/dev/null || true
+# ---------- 恢复持久数据 ----------
+if [[ -n "$PERSIST_TMP" ]] && [[ -d "$PERSIST_TMP" ]]; then
+  # 恢复数据库
+  if [[ -d "$PERSIST_TMP/data" ]] && ls "$PERSIST_TMP/data/"*.db 1>/dev/null 2>&1; then
+    log "Restoring data/*.db from saved copy..."
+    # 新包可能带 schema-only 的 .db，先备为 .seed 用于 RBAC 合并
+    for newdb in "$TARGET_DIR/data/"*.db; do
+      [ -f "$newdb" ] && mv "$newdb" "${newdb}.seed" 2>/dev/null || true
+    done
+    # 恢复用户数据库
+    cp -a "$PERSIST_TMP/data/"*.db "$TARGET_DIR/data/"
+    log "OK: database restored (user data preserved)"
+
+    # RBAC 种子数据合并（仅当恢复的库 role 表为空时）
+    if command -v sqlite3 >/dev/null 2>&1; then
+      for olddb in "$TARGET_DIR/data/"*.db; do
+        [ -f "$olddb" ] || continue
+        [[ "$olddb" == *.seed ]] && continue
+        seeddb="${olddb}.seed"
+        [ -f "$seeddb" ] || continue
+        ROLE_COUNT=$(sqlite3 "$olddb" "SELECT count(*) FROM role;" 2>/dev/null || echo "0")
+        if [[ "$ROLE_COUNT" -eq 0 ]]; then
+          log "Merging RBAC seed data into $(basename "$olddb")"
+          for tbl in role permission role_permission; do
+            sqlite3 "$seeddb" ".mode insert $tbl" "SELECT * FROM $tbl;" 2>/dev/null | sqlite3 "$olddb" 2>/dev/null || true
+          done
+        fi
+        rm -f "$seeddb"
       done
-      # 恢复旧数据库（保留用户数据）
-      cp -a "$bak_latest/data/"*.db "$TARGET_DIR/data/" 2>/dev/null || true
-      # 把新包的 RBAC 种子数据合并到旧库（仅当旧库 role 表为空时）
-      if command -v sqlite3 >/dev/null 2>&1; then
-        for olddb in "$TARGET_DIR/data/"*.db; do
-          [ -f "$olddb" ] || continue
-          seeddb="${olddb}.seed"
-          [ -f "$seeddb" ] || continue
-          ROLE_COUNT=$(sqlite3 "$olddb" "SELECT count(*) FROM role;" 2>/dev/null || echo "0")
-          if [[ "$ROLE_COUNT" -eq 0 ]]; then
-            log "Merging RBAC seed data into restored $(basename "$olddb")"
-            for tbl in role permission role_permission; do
-              sqlite3 "$seeddb" ".mode insert $tbl" "SELECT * FROM $tbl;" 2>/dev/null | sqlite3 "$olddb" 2>/dev/null || true
-            done
-          fi
-          rm -f "$seeddb"
-        done
-      else
-        rm -f "$TARGET_DIR/data/"*.seed 2>/dev/null || true
-        log "WARN: sqlite3 not found, cannot merge RBAC seed data"
-      fi
+    else
+      rm -f "$TARGET_DIR/data/"*.seed 2>/dev/null || true
+      log "WARN: sqlite3 not found, cannot merge RBAC seed data"
     fi
+  else
+    log "No .db files in saved data/ — using new package database"
   fi
-  if [[ -n "$bak_latest" ]] && [[ -d "$bak_latest/downloads" ]]; then
-    if [[ -n "$(ls -A "$bak_latest/downloads/" 2>/dev/null)" ]]; then
-      log "Restoring downloads/ from backup: $bak_latest/downloads/"
-      rsync -a "$bak_latest/downloads/" "$TARGET_DIR/downloads/"
-    fi
+
+  # 恢复 downloads
+  if [[ -d "$PERSIST_TMP/downloads" ]] && [[ -n "$(ls -A "$PERSIST_TMP/downloads/" 2>/dev/null)" ]]; then
+    log "Restoring downloads/ from saved copy..."
+    rsync -a "$PERSIST_TMP/downloads/" "$TARGET_DIR/downloads/"
+    log "OK: downloads restored"
   fi
+
+  rm -rf "$PERSIST_TMP"
+  log "OK: temporary persist dir cleaned"
 fi
 
 if [[ ! -f "$TARGET_DIR/.env.production" ]]; then

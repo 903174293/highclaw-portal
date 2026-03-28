@@ -327,7 +327,23 @@
       "root": "/Users/weimianzhizizhangwanbin/Data/DevRepository/Git/highclaw-portal"
     },
     "distDirRoot": ".next",
-    "_originalRedirects": []
+    "_originalRedirects": [
+      {
+        "source": "/docs/configuration",
+        "destination": "/docs/config",
+        "permanent": true
+      },
+      {
+        "source": "/en/docs/configuration",
+        "destination": "/en/docs/config",
+        "permanent": true
+      },
+      {
+        "source": "/zh/docs/configuration",
+        "destination": "/zh/docs/config",
+        "permanent": true
+      }
+    ]
   },
   "appDir": "/Users/weimianzhizizhangwanbin/Data/DevRepository/Git/highclaw-portal",
   "relativeAppDir": "",

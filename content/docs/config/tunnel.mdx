@@ -1,0 +1,53 @@
+---
+title: Tunnel
+description: "Expose your local HighClaw gateway to the internet via Cloudflare, Tailscale, ngrok, or custom tunnels."
+---
+
+## Provider
+
+```yaml
+tunnel:
+  provider: "none"   # "none" | "cloudflare" | "tailscale" | "ngrok" | "custom"
+```
+
+## Cloudflare Tunnel
+
+```yaml
+tunnel:
+  provider: "cloudflare"
+  cloudflare:
+    token: ""        # Cloudflare Tunnel token
+```
+
+## Tailscale
+
+```yaml
+tunnel:
+  provider: "tailscale"
+  tailscale:
+    funnel: false    # true = public access via Tailscale Funnel
+    hostname: ""     # custom hostname
+```
+
+## ngrok
+
+```yaml
+tunnel:
+  provider: "ngrok"
+  ngrok:
+    authToken: ""    # ngrok auth token
+    domain: ""       # custom domain
+```
+
+## Custom
+
+For any tunnel tool (e.g., frp, bore):
+
+```yaml
+tunnel:
+  provider: "custom"
+  custom:
+    startCommand: ""     # e.g. "frpc -c frpc.ini"
+    healthUrl: ""        # health check URL
+    urlPattern: ""       # regex to extract public URL from output
+```

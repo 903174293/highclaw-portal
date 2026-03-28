@@ -40,7 +40,24 @@ const nextConfig = {
     ],
   },
   async redirects() {
-    return [];
+    return [
+      // 旧「单页配置」入口已拆为 /docs/config/*，保留书签与外链
+      {
+        source: '/docs/configuration',
+        destination: '/docs/config',
+        permanent: true,
+      },
+      {
+        source: '/en/docs/configuration',
+        destination: '/en/docs/config',
+        permanent: true,
+      },
+      {
+        source: '/zh/docs/configuration',
+        destination: '/zh/docs/config',
+        permanent: true,
+      },
+    ];
   },
   async headers() {
     return [

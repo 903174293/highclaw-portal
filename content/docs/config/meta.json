@@ -1,0 +1,15 @@
+{
+  "title": "Configuration",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "agent",
+    "autonomy",
+    "gateway",
+    "channels",
+    "reliability",
+    "tunnel",
+    "cron",
+    "other"
+  ]
+}

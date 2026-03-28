@@ -1,0 +1,168 @@
+---
+title: Channels
+description: "Messaging channel integrations — Telegram, Discord, Slack, WhatsApp, Feishu, WeChat Work, and more."
+---
+
+HighClaw connects to multiple messaging platforms simultaneously. The CLI channel is always enabled.
+
+```yaml
+channels:
+  cli: true   # always on
+```
+
+## Telegram
+
+```yaml
+channels:
+  telegram:
+    botToken: ""                # from @BotFather
+    allowFrom: []               # usernames (no @), empty = reject all
+    allowedUsers: []            # numeric user IDs, merged with allowFrom
+    webhookUrl: ""              # empty = long-polling mode
+    webhookSecret: ""
+    groups:
+      "group-id":
+        requireMention: true    # must @bot to respond
+```
+
+## Discord
+
+```yaml
+channels:
+  discord:
+    token: ""                   # bot token
+    dmPolicy: "pairing"         # "pairing" | "open"
+    allowFrom: []               # user IDs
+    allowedUsers: []
+    guildId: ""
+    mediaMaxMb: 8
+    listenToBots: false
+    guilds:
+      "guild-id":
+        requireMention: true
+```
+
+## Slack
+
+```yaml
+channels:
+  slack:
+    botToken: ""                # xoxb-...
+    appToken: ""                # xapp-...
+    allowFrom: []               # Slack Member IDs
+    allowedUsers: []
+    dmPolicy: "pairing"
+    channelId: ""
+```
+
+## WhatsApp Business Cloud API
+
+```yaml
+channels:
+  whatsapp:
+    accessToken: ""             # Meta Business API token
+    phoneNumberId: ""
+    verifyToken: ""             # webhook verification token
+    appSecret: ""               # optional — signature verification
+    allowedNumbers:
+      - "+1234567890"
+    allowFrom: []
+    dmPolicy: "pairing"
+    groups: {}
+```
+
+## Feishu / Lark
+
+```yaml
+channels:
+  feishu:                       # or "lark" (equivalent)
+    appId: ""
+    appSecret: ""
+    verifyToken: ""             # event subscription verification
+    encryptKey: ""              # optional
+    allowedUsers: []            # "*" = all
+    allowedChats: []
+    webhookUrl: ""              # incoming webhook (optional)
+    botName: ""                 # auto-detected on onboard
+```
+
+## WeChat Work (WeCom)
+
+```yaml
+channels:
+  wecom:
+    corpId: ""
+    agentId: 0
+    secret: ""
+    token: ""
+    encodingAesKey: ""
+    allowedUsers: []            # "*" = all
+    allowedDepartments: []
+```
+
+## Other channels
+
+### Signal
+
+```yaml
+channels:
+  signal:
+    enabled: false
+    cliPath: ""                 # signal-cli path
+    allowFrom: []
+```
+
+### BlueBubbles (iMessage)
+
+```yaml
+channels:
+  bluebubbles:
+    serverUrl: ""
+    password: ""
+    webhookPath: ""
+```
+
+### iMessage (macOS native)
+
+```yaml
+channels:
+  imessage:
+    allowedContacts: []
+```
+
+### Matrix
+
+```yaml
+channels:
+  matrix:
+    homeserver: ""
+    accessToken: ""
+    roomId: ""
+    allowedUsers: []
+```
+
+### IRC
+
+```yaml
+channels:
+  irc:
+    server: ""
+    port: 6697                  # 6697 = TLS
+    nickname: ""
+    username: ""
+    channels: []
+    allowedUsers: []
+    serverPassword: ""
+    nickservPassword: ""
+    saslPassword: ""
+    verifyTls: true
+```
+
+### Webhook (generic)
+
+```yaml
+channels:
+  webhook:
+    port: 0                     # 0 = use gateway port
+    secret: ""
+```

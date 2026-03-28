@@ -1,0 +1,49 @@
+---
+title: Reliability & Model Routes
+description: "Retry strategy, provider fallback chain, and hint-based model routing."
+---
+
+## Retry and fallback
+
+```yaml
+reliability:
+  providerRetries: 2           # retry count per provider call
+  providerBackoffMs: 500       # base backoff interval (ms, exponential)
+  fallbackProviders: []        # ordered fallback chain
+```
+
+When the primary provider fails after `providerRetries` attempts, HighClaw tries each fallback provider in order:
+
+```yaml
+reliability:
+  fallbackProviders:
+    - "openai"
+    - "ollama"
+```
+
+## Model routes (hint routing)
+
+Use `hint:xxx` syntax in messages to route to a specific provider + model:
+
+```yaml
+modelRoutes:
+  - hint: "fast"
+    provider: "groq"
+    model: "llama-3.3-70b-versatile"
+    apiKey: ""                  # empty = use provider's default key
+
+  - hint: "smart"
+    provider: "anthropic"
+    model: "claude-opus-4-6"
+
+  - hint: "cheap"
+    provider: "ollama"
+    model: "llama3"
+```
+
+Usage in chat:
+
+```
+hint:fast Write a bash script to...
+hint:smart Analyze this architecture...
+```

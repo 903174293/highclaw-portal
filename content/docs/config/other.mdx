@@ -1,0 +1,151 @@
+---
+title: Other Settings
+description: "Skills, browser, hooks, logging, task audit log, identity, secrets, observability, and auth profiles."
+---
+
+## Skills
+
+```yaml
+skills:
+  bundledDir: ""                # override bundled skills dir (usually not needed — binary has them embedded)
+  openSkillsURLs: "https://github.com/besoeasy/open-skills"
+  marketplaceURLs: ""           # enterprise/commercial skill repos (comma-separated)
+```
+
+Set `openSkillsURLs` to empty string to disable community skills. `marketplaceURLs` supports comma-separated URLs for multiple repos.
+
+## Browser
+
+```yaml
+browser:
+  enabled: false
+  color: ""                     # browser color theme
+```
+
+## Hooks
+
+```yaml
+hooks:
+  gmail:
+    account: ""                 # Google account for Gmail Pub/Sub
+    model: ""                   # model for processing emails
+  internal:
+    enabled: false              # enable internal event hooks
+```
+
+## Composio
+
+```yaml
+composio:
+  enabled: false
+  apiKey: ""
+```
+
+## Secrets
+
+```yaml
+secrets:
+  encrypt: true                 # encrypt stored secrets (recommended)
+```
+
+## Log
+
+```yaml
+log:
+  dir: ""                       # default: ~/.highclaw/logs
+  level: "info"                 # "debug" | "info" | "warn" | "error"
+  maxAgeDays: 30
+  maxSizeMB: 50
+  stderrEnabled: true           # also output to stderr
+```
+
+## Task audit log
+
+```yaml
+taskLog:
+  enabled: true
+  dir: ""                       # default: ~/.highclaw/state
+  maxAgeDays: 90
+  maxRecords: 100000
+```
+
+## Identity
+
+Identity is configured via Markdown files in the workspace:
+
+| File | Purpose |
+|---|---|
+| `IDENTITY.md` | Who the agent is |
+| `SOUL.md` | Core personality and values |
+| `USER.md` | Who the user is |
+| `AGENTS.md` | Behavior guidelines |
+
+AIEOS v1.1 JSON format is also supported:
+
+```yaml
+identity:
+  format: "aieos"
+  aieos_path: "identity.json"
+```
+
+## Observability
+
+Reserved for future Prometheus / OpenTelemetry support:
+
+```yaml
+observability: {}
+```
+
+## Auth profiles (multi-key rotation)
+
+Configure multiple API keys for the same provider with automatic failover:
+
+```yaml
+auth:
+  profilesEnabled: false
+```
+
+### Key management CLI
+
+```bash
+highclaw auth add-key              # add API key to rotation pool
+highclaw auth list                 # view all keys and status
+highclaw auth remove-key           # remove key
+highclaw auth status               # health status
+highclaw auth copy-from-main       # inherit keys to sub-agent
+highclaw auth reset-cooldown       # reset cooldown state
+```
+
+### Priority
+
+Auth Profiles key > `config.yaml` apiKey > Environment variables
+
+### Rotation order
+
+```yaml
+auth:
+  order:
+    openrouter:
+      - openrouter-1
+      - openrouter-2
+    anthropic:
+      - anthropic-1
+      - anthropic-2
+```
+
+### Cooldown backoff
+
+```yaml
+auth:
+  cooldowns:
+    baseCooldownSeconds: 30          # base cooldown after first failure
+    maxCooldownSeconds: 3600         # max single cooldown (1h)
+    billingBackoffMinutes: 60        # HTTP 402 disable duration
+    billingBackoffMaxMinutes: 1440   # max billing disable (24h)
+    failureWindowHours: 24           # sliding window for error count reset
+    maxConsecutiveErrors: 10
+```
+
+Storage:
+- Main agent: `~/.highclaw/auth-profiles.json`
+- Sub-agents: `~/.highclaw/agents/<id>/auth-profiles.json`
