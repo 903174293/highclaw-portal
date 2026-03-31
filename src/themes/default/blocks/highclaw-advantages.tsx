@@ -34,7 +34,8 @@ const allChannels = [
   { name: 'Discord', Icon: SiDiscord, color: '#5865F2' },
   { name: 'Slack', Icon: SiSlack, color: '#E01E5A' },
   { name: 'WhatsApp', Icon: SiWhatsapp, color: '#25D366' },
-  { name: 'Feishu', Icon: null, color: '#3370FF', emoji: '飞' },
+  /** 透明底 Logo：白底容器，见 public/feishu.jpg */
+  { name: 'Feishu', Icon: null, color: '#3370FF', logoSrc: '/feishu.jpg' as const },
   { name: 'WeChat', Icon: SiWechat, color: '#07C160' },
   { name: 'iMessage', Icon: null, color: '#34C759', emoji: '💬' },
   { name: 'Matrix', Icon: SiMatrix, color: '#0DBD8B' },
@@ -43,6 +44,30 @@ const allChannels = [
   { name: 'IRC', Icon: null, color: '#CC5555', emoji: '#' },
   { name: 'CLI', Icon: null, color: '#06b6d4', emoji: '>' },
 ];
+
+/** 单一渠道图标（仅 Feishu 使用白底 + 自定义图片，其余逻辑不变） */
+function ChannelIconBox({ ch }: { ch: (typeof allChannels)[number] }) {
+  const bg =
+    'logoSrc' in ch && ch.logoSrc ? '#ffffff' : `${ch.color}12`;
+  return (
+    <div
+      className="w-20 h-20 rounded-xl flex items-center justify-center overflow-hidden"
+      style={{ backgroundColor: bg }}
+    >
+      {'logoSrc' in ch && ch.logoSrc ? (
+        <img
+          src={ch.logoSrc}
+          alt={ch.name}
+          className="max-h-[72%] max-w-[72%] object-contain"
+        />
+      ) : ch.Icon ? (
+        <ch.Icon size={40} color={ch.color} />
+      ) : (
+        <span className="text-3xl font-bold" style={{ color: ch.color }}>{ch.emoji}</span>
+      )}
+    </div>
+  );
+}
 
 function ScrollReveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -111,9 +136,7 @@ export function HighclawAdvantages({ section }: { section: Section }) {
                   <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
                     {allChannels.slice(0, 6).map((ch, i) => (
                       <div key={i} className="group flex flex-col items-center gap-2.5 py-4 px-2 rounded-xl border border-[#3b82f6]/15 bg-[#3b82f6]/[0.02] transition-all duration-300 hover:border-[#3b82f6]/35 hover:bg-[#3b82f6]/[0.06] hover:scale-105">
-                        <div className="w-20 h-20 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${ch.color}12` }}>
-                          {ch.Icon ? <ch.Icon size={40} color={ch.color} /> : <span className="text-3xl font-bold" style={{ color: ch.color }}>{ch.emoji}</span>}
-                        </div>
+                        <ChannelIconBox ch={ch} />
                         <span className="text-xs font-medium text-[#e2e8f0]/80">{ch.name}</span>
                       </div>
                     ))}
@@ -126,9 +149,7 @@ export function HighclawAdvantages({ section }: { section: Section }) {
                   <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
                     {allChannels.slice(6).map((ch, i) => (
                       <div key={i} className="group flex flex-col items-center gap-2.5 py-4 px-2 rounded-xl border border-[#06b6d4]/15 bg-[#06b6d4]/[0.02] transition-all duration-300 hover:border-[#06b6d4]/35 hover:bg-[#06b6d4]/[0.06] hover:scale-105">
-                        <div className="w-20 h-20 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${ch.color}12` }}>
-                          {ch.Icon ? <ch.Icon size={40} color={ch.color} /> : <span className="text-3xl font-bold" style={{ color: ch.color }}>{ch.emoji}</span>}
-                        </div>
+                        <ChannelIconBox ch={ch} />
                         <span className="text-xs font-medium text-[#e2e8f0]/80">{ch.name}</span>
                       </div>
                     ))}

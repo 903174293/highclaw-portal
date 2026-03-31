@@ -49,7 +49,7 @@ Logo | Download | Tutorials | Blog | GitHub(↗) | Team | Contact Us     [ Sign 
 - **Download**: Scrolls to / navigates to download section with auto-detected platform
 - **Tutorials**: Opens tutorials hub with sidebar navigation
 - **Blog**: Product updates, technical articles, community content
-- **GitHub**: External link (opens in new tab) to `https://github.com/903174293/highclaw`
+- **GitHub**: External link (opens in new tab) to `https://github.com/HighClawHub/highclaw`
 - **Team**: Core team profiles page
 - **Contact Us**: Contact form page
 - **Sign In / Sign Up**: Right-aligned auth buttons
@@ -73,7 +73,7 @@ Logo | Download | Tutorials | Blog | GitHub(↗) | Team | Contact Us     [ Sign 
 
 | Platform | Icon | URL |
 |:--------:|:----:|:---:|
-| GitHub | Github icon | `https://github.com/903174293/highclaw` |
+| GitHub | Github icon | `https://github.com/HighClawHub/highclaw` |
 | Discord | Discord icon | `https://discord.gg/89C8zWz4H` |
 | Email | Mail icon | `mailto:contact@highclaw.ai` |
 
@@ -183,7 +183,7 @@ Six cards in a 3x2 grid (desktop) / 2x3 (tablet) / 1x6 (mobile), each with icon 
 - **Terminal-style code block**:
   ```bash
   # 1. Build
-  git clone https://github.com/903174293/highclaw.git && cd highclaw && make build && make install
+  git clone https://github.com/HighClawHub/highclaw.git && cd highclaw && make build && make install
 
   # 2. Setup
   highclaw onboard --interactive
@@ -333,7 +333,7 @@ Six cards in a 3x2 grid (desktop) / 2x3 (tablet) / 1x6 (mobile), each with icon 
 
 **Info Section**:
 - Email: `contact@highclaw.ai` (placeholder)
-- GitHub: `https://github.com/903174293/highclaw`
+- GitHub: `https://github.com/HighClawHub/highclaw`
 - Discord: `https://discord.gg/89C8zWz4H`
 - Twitter/X: `@highclaw_ai` (placeholder)
 
@@ -607,8 +607,8 @@ Tutorials   Blog ←→ Discord(↗)
 |:------:|:--------:|
 | **Current approach** | Version hardcoded in page config (`v1.0.0`) |
 | **Recommended v1** | Environment variable `NEXT_PUBLIC_HIGHCLAW_VERSION` set at build/deploy time |
-| **Recommended v2** | GitHub API call (`/repos/903174293/highclaw/releases/latest`) at build time via `getStaticProps` / ISR — auto-fetches latest release tag, asset URLs, and changelog |
-| **Download URLs** | Pattern: `https://github.com/903174293/highclaw/releases/download/v{version}/highclaw-{platform}-{arch}.tar.gz` |
+| **Recommended v2** | GitHub API call (`/repos/HighClawHub/highclaw/releases/latest`) at build time via `getStaticProps` / ISR — auto-fetches latest release tag, asset URLs, and changelog |
+| **Download URLs** | Pattern: `https://github.com/HighClawHub/highclaw/releases/download/v{version}/highclaw-{platform}-{arch}.tar.gz` |
 | **Revalidation** | ISR revalidate every 1 hour — new releases appear within 1 hour without manual redeploy |
 
 ### 13.3 Blog Content Updates

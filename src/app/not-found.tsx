@@ -45,7 +45,7 @@ export default function NotFoundPage() {
       </div>
 
       <a
-        href="https://github.com/903174293/highclaw/issues"
+        href="https://github.com/HighClawHub/highclaw/issues"
         target="_blank"
         rel="noopener noreferrer"
         className="text-sm text-[#64748b] hover:text-[#3b82f6] transition-colors mt-2"

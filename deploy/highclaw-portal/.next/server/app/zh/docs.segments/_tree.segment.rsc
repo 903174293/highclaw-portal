@@ -2,9 +2,9 @@
 :HL["/_next/static/media/bb3ef058b751a6ad-s.p.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/_next/static/media/ec14413c594b3356-s.p.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/_next/static/css/5eaba2d8c03e0728.css","style"]
-:HL["/_next/static/css/4ca0244bdc9d1a7b.css","style"]
+:HL["/_next/static/css/177b9d9c547b9cd3.css","style"]
 :HL["/_next/static/css/4cd23781d18a52d3.css","style"]
-:HL["/_next/static/css/a73f8bda1a136c13.css","style"]
+:HL["/_next/static/css/6e14ac3147af83f2.css","style"]
 :HL["/_next/static/media/highclaw.04aadfd6.png","image"]
-:HL["https://raw.githubusercontent.com/903174293/highclaw/main/images/channels-overview.svg","image"]
-0:{"buildId":"lFdtyyPB6JqpVNkjuNe-_","tree":{"name":"","paramType":null,"paramKey":"","hasRuntimePrefetch":false,"slots":{"children":{"name":"locale","paramType":"d","paramKey":"zh","hasRuntimePrefetch":false,"slots":{"children":{"name":"(docs)","paramType":null,"paramKey":"(docs)","hasRuntimePrefetch":false,"slots":{"children":{"name":"docs","paramType":null,"paramKey":"docs","hasRuntimePrefetch":false,"slots":{"children":{"name":"slug","paramType":"oc","paramKey":"","hasRuntimePrefetch":false,"slots":{"children":{"name":"__PAGE__","paramType":null,"paramKey":"__PAGE__","hasRuntimePrefetch":false,"slots":null,"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":true},"staleTime":300}
+:HL["https://raw.githubusercontent.com/HighClawHub/highclaw/main/images/channels-overview.svg","image"]
+0:{"buildId":"k3g1w3c6HTBmsqYOutAEX","tree":{"name":"","paramType":null,"paramKey":"","hasRuntimePrefetch":false,"slots":{"children":{"name":"locale","paramType":"d","paramKey":"zh","hasRuntimePrefetch":false,"slots":{"children":{"name":"(docs)","paramType":null,"paramKey":"(docs)","hasRuntimePrefetch":false,"slots":{"children":{"name":"docs","paramType":null,"paramKey":"docs","hasRuntimePrefetch":false,"slots":{"children":{"name":"slug","paramType":"oc","paramKey":"","hasRuntimePrefetch":false,"slots":{"children":{"name":"__PAGE__","paramType":null,"paramKey":"__PAGE__","hasRuntimePrefetch":false,"slots":null,"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":true},"staleTime":300}

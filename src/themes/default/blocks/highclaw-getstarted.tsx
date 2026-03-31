@@ -31,7 +31,7 @@ export function HighclawGetstarted({ section }: { section: Section }) {
   const [copied, setCopied] = useState(false);
 
   const codeContent = `# 1. Build
-git clone https://github.com/903174293/highclaw.git && cd highclaw && make build && make install
+git clone https://github.com/HighClawHub/highclaw.git && cd highclaw && make build && make install
 
 # 2. Setup
 highclaw onboard --interactive
@@ -86,7 +86,7 @@ highclaw agent -m "Hello, HighClaw!"`;
                   <span className="block">
                     <span className="text-[#c4b5fd]">$</span>{' '}
                     <span className="text-[#f8fafc]">
-                      git clone https://github.com/903174293/highclaw.git && cd highclaw && make build && make install
+                      git clone https://github.com/HighClawHub/highclaw.git && cd highclaw && make build && make install
                     </span>
                   </span>
                   <span className="block h-3" aria-hidden />
@@ -122,7 +122,7 @@ highclaw agent -m "Hello, HighClaw!"`;
               Download
             </Link>
             <a
-              href="https://github.com/903174293/highclaw"
+              href="https://github.com/HighClawHub/highclaw"
               target="_blank"
               rel="noopener noreferrer"
               className="hc-btn-ghost inline-flex items-center gap-2 px-8 py-3.5 rounded-lg text-base font-semibold"

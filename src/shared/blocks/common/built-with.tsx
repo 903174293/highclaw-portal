@@ -11,7 +11,7 @@ export function BuiltWith() {
   return (
     <Button asChild variant="outline" size="sm" className="hover:bg-primary/10">
       <Link
-        href="https://github.com/903174293/highclaw"
+        href="https://github.com/HighClawHub/highclaw"
         target="_blank"
         rel="noopener noreferrer"
         className="inline-flex items-center gap-2"

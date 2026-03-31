@@ -252,7 +252,7 @@ export function HighclawDownload({ section: _section }: { section: Section }) {
             <p className="text-[#f8fafc] font-mono text-lg font-bold">{version}</p>
           )}
           <a
-            href="https://github.com/903174293/highclaw/releases"
+            href="https://github.com/HighClawHub/highclaw/releases"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 text-sm text-[#3b82f6] hover:text-[#06b6d4] transition-colors"

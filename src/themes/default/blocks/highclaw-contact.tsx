@@ -43,8 +43,8 @@ const contactLinks = [
   {
     icon: IconBrandGithub,
     title: 'GitHub',
-    value: 'github.com/903174293/highclaw',
-    href: 'https://github.com/903174293/highclaw',
+    value: 'github.com/HighClawHub/highclaw',
+    href: 'https://github.com/HighClawHub/highclaw',
     external: true,
   },
   {
